@@ -1,0 +1,7 @@
+lower  upper
+N  1.100000e+00  4.200000e+00
+Alpha  7.000000e-04  6.300000e-03
+ThetaSat  3.500000e-01  5.500000e-01
+ThetaRes  1.666667e-02  1.500000e-01
+LateralHydrConductivity  0.000000e+00  1.000000e-01
+NormalHydrConductivity  0.000000e+00  1.000000e-01
