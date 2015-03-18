@@ -142,7 +142,7 @@ MaxLayerThicknessSnow	=	20,1.E10,150,50,10
 PointSoilType	=	1
 SoilLayerTypes	=	1
 ![mm]
-InitWaterTableHeightOverTopoSurface	=	0 
+!InitWaterTableHeightOverTopoSurface	=	0 
 !!-2000
 ![C]
 InitSoilTemp	=	4
