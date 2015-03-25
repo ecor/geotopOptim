@@ -113,6 +113,8 @@ NULL
 
 geotopGOF <- function(x=NULL,geotop.model=NULL,sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,...) {
 	 
+	print("x:")
+	print(x)
 	
 	if (!is.null(geotop.model)) {
 		

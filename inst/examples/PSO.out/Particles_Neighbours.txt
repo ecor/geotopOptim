@@ -1,11 +1,7 @@
-Neigh1  Neigh2  Neigh3  Neigh4  Neigh5  Neigh6  Neigh7  Neigh8  Neigh9  Neigh10
-Part1  1  5  6  9            
-Part2  2  4  5  7  8  9        
-Part3  3  6  8  9            
-Part4  4  8  10              
-Part5  3  4  5  6  9  10        
-Part6  3  5  6  7            
-Part7  6  7  10              
-Part8  3  8                
-Part9  4  7  8  9  10          
-Part10  2  8  9  10            
+Neigh1  Neigh2  Neigh3  Neigh4  Neigh5  Neigh6
+Part1  1  3  5      
+Part2  2  3  6      
+Part3  3  5  6      
+Part4  4  5        
+Part5  1  2  3  5  6  
+Part6  2  4  6      

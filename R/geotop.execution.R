@@ -78,7 +78,7 @@ NULL
 
 geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath,inpts.file="geotop.inpts",
 		runpath="/Users/ecor/ownCloud/job",clean=TRUE,recovery=!clean,getKeywords=NULL,
-		data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",intern=FALSE,param.soil=TRUE,  formatter = "%04d",paramPrefix="Header",...) {
+		data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",intern=FALSE,param.soil=TRUE,formatter = "%04d",paramPrefix="Header",names_par=NULL,...) {
 	
 	print(simpath)
 	t <- str_split(simpath,"/")[[1]]
@@ -106,8 +106,14 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 	print(param)
 	print(names(param))
 	print(param.soil)
-	
+	print(names_par)
 	if (!is.null(param)) {
+		
+		if (is.null(names(param))) {
+			
+			names(param) <- names_par
+			
+		}
 		
 		if (is.null(names(param))) {
 			
@@ -128,6 +134,43 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 #			HeaderKthSoilSolids	=	"Kth"
 #			HeaderCthSoilSolids	=	"Cth"
 			
+		
+			if (c("PsiGamma") %in% names(param)) {
+			
+				psiGamma <- as.numeric(param["PsiGamma"])	
+				
+				
+				
+			}	else {
+				
+				psiGamma <- NA
+				
+			}
+			
+			######
+			param <- param[!(names(param) %in% c("PsiGamma"))]
+			
+		    if (c("SoilInitPresL0001") %in% names(param))	{
+				
+				parSoilInitPresL <- which(str_detect(names(param),"SoilInitPresL"))
+				param_soil <- param[parSoilInitPresL]
+				param <- param[-parSoilInitPresL]
+				len <- length(param_soil)
+				
+				names_param_soil <- sprintf("SoilInitPresL%04d",1:len)
+				psisoil <- param_soil[names_param_soil]
+				
+				
+				
+			}	else {
+				
+				psisoil <- NULL
+			}	
+			
+			
+			
+			
+			
 			param.soil.df.filename <- 	get.geotop.inpts.keyword.value("SoilParFile",wpath=rundir,inpts.file=inpts.file,add_wpath=TRUE)
 			param.soil.df.filename <- paste(param.soil.df.filename,formatter,".txt",sep="")
 			layer <- 1 
@@ -146,7 +189,9 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				ThetaRes <- get.geotop.inpts.keyword.value(paste(paramPrefix,"ThetaRes",sep=""),wpath=rundir,inpts.file=inpts.file)
 				VG_Alpha <- get.geotop.inpts.keyword.value(paste(paramPrefix,"Alpha",sep=""),wpath=rundir,inpts.file=inpts.file)
 				VG_N <- get.geotop.inpts.keyword.value(paste(paramPrefix,"N",sep=""),wpath=rundir,inpts.file=inpts.file)
-				
+				Dz <- get.geotop.inpts.keyword.value(paste(paramPrefix,"SoilDz",sep=""),wpath=rundir,inpts.file=inpts.file)
+				SoilInitPres <- get.geotop.inpts.keyword.value(paste(paramPrefix,"SoilInitPres",sep=""),wpath=rundir,inpts.file=inpts.file)
+				print(Dz)
 				
 			}
 			
@@ -158,6 +203,37 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				
 			}
 		
+		
+			if (!is.na(psiGamma)) {
+				print(Dz)
+				print(param.soil.df)
+				dz <- param.soil.df[,Dz]
+				z <- dz/2
+				for(i in 2:length(z)) {
+					z[i] <- z[i-1]+dz[i]/2+dz[i-1]/2
+					
+				}
+				
+				
+				
+				if (SoilInitPres %in% names(param)) {
+					
+					param.soil.df[,SoilInitPres] <- param[[SoilInitPres]]+psiGamma*z
+				}
+				
+				if (!is.null(psisoil)) {
+					
+					param.soil.df[,SoilInitPres][1:length(psisoil)] <- psisoil
+					
+					zfront <- z[length(psisoil)]
+					
+					param.soil.df[,SoilInitPres][z>zfront] <- psisoil[length(psisoil)]+psiGamma*(z[z>zfront]-zfront)
+			
+					
+				}	
+				
+				
+			}
 			
 			
 			### CORRECT SOIL WATER
@@ -179,7 +255,7 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 			param.soil.df[,FieldCapacity] <- swc(psi=psi_FC,alpha=alpha,n=n,theta_sat=theta_sat,theta_res=theta_res,type_swc="VanGenuchten")
 			param.soil.df[,WiltingPoint] <- swc(psi=psi_WP,alpha=alpha,n=n,theta_sat=theta_sat,theta_res=theta_res,type_swc="VanGenuchten")
 			###
-			
+			print(param.soil.df)
 			write.table(x=param.soil.df,file=param.soil.df.filename,sep=",",quote=FALSE,row.names = FALSE,col.names = TRUE)
 		#####	param.soil.df <<- param.soil.df
 			

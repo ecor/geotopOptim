@@ -7,7 +7,8 @@ geotopExec(param = NULL, bin = "/Users/ecor/local/bin/geotop_zh", simpath,
   inpts.file = "geotop.inpts", runpath = "/Users/ecor/ownCloud/job",
   clean = TRUE, recovery = !clean, getKeywords = NULL,
   data.frame = TRUE, date_field = "Date12.DDMMYYYYhhmm.", intern = FALSE,
-  param.soil = TRUE, formatter = "\%04d", paramPrefix = "Header", ...)
+  param.soil = TRUE, formatter = "\%04d", paramPrefix = "Header",
+  names_par = NULL, ...)
 }
 \arguments{
 \item{param}{vector of parameters to set for GEOtop simulation. Actually implemented only for soil type parameters. Deafault is \code{NULL}.}
