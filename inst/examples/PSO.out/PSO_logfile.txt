@@ -4,11 +4,11 @@ hydroPSO Built    :  R 3.1.0; ; 2014-04-24 21:56:34 UTC; unix
 R version         :  R version 3.1.2 (2014-10-31)  
 Platform          :  x86_64-apple-darwin13.4.0  
 ================================================================================
-Starting Time     : Wed Mar 25 17:14:02 2015 
+Starting Time     : Fri Mar 27 11:05:16 2015 
 ================================================================================
 Objective Function: fn 
 MinMax            : min 
-Dimension         : 11 
+Dimension         : 15 
 Nmbr of Particles : 6 
 Max Iterations    : 20 
 Method            : spso2011 
@@ -36,7 +36,7 @@ Total fn calls    :  120
 Nmbr of Iterations:  20  
 Regroupings       :  0  
 ================================================================================
-Ending Time       :  Wed Mar 25 19:34:43 2015  
+Ending Time       :  Fri Mar 27 12:30:21 2015  
 ================================================================================
-Elapsed Time      :  2.34 hours  
+Elapsed Time      :  1.42 hours  
 ================================================================================

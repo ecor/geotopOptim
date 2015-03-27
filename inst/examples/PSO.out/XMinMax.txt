@@ -2,6 +2,7 @@ lower  upper
 N   1.45e+00   1.89e+00
 Alpha   1.31e-03   1.31e-02
 ThetaSat   4.10e-01   5.30e-01
+ThetaSat_bottomlayer   1.10e-01   2.10e-01
 ThetaRes   5.00e-02   7.00e-02
 LateralHydrConductivity   9.23e-02   1.00e-01
 NormalHydrConductivity   9.23e-02   1.00e-01
@@ -9,4 +10,7 @@ SoilInitPresL0001  -1.00e+04   0.00e+00
 SoilInitPresL0002  -1.00e+04   0.00e+00
 SoilInitPresL0003  -1.00e+04   0.00e+00
 SoilInitPresL0004  -1.00e+04   0.00e+00
+SoilInitPresL0005  -1.00e+04   0.00e+00
+SoilInitPresL0006  -1.00e+04   0.00e+00
+SoilInitPresL0007  -1.00e+04   0.00e+00
 PsiGamma   6.00e-01   1.00e+00

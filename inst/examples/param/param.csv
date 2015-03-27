@@ -2,6 +2,7 @@ name,lower,upper
 N,1.45,1.89
 Alpha,0.00131,0.0131
 ThetaSat,0.41,0.53
+ThetaSat_bottomlayer,0.11,0.21
 ThetaRes,0.05,0.07
 LateralHydrConductivity,0.0923,0.1
 NormalHydrConductivity,0.0923,0.1
@@ -9,4 +10,7 @@ SoilInitPresL0001,-10000,0
 SoilInitPresL0002,-10000,0
 SoilInitPresL0003,-10000,0
 SoilInitPresL0004,-10000,0
+SoilInitPresL0005,-10000,0
+SoilInitPresL0006,-10000,0
+SoilInitPresL0007,-10000,0
 PsiGamma,0.6,1

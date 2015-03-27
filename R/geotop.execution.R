@@ -149,6 +149,12 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 			
 			######
 			param <- param[!(names(param) %in% c("PsiGamma"))]
+			### INSERT BOTTOM LAYER!!
+			
+			param_bottomlayer <- param[str_detect(names(param),"_bottomlayer")]
+			param <- param[!(param %in% param_bottomlayer)]
+			names(param_bottomlayer) <- str_replace_all(names(param_bottomlayer),"_bottomlayer","")
+			
 			
 		    if (c("SoilInitPresL0001") %in% names(param))	{
 				
@@ -182,7 +188,12 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				ids <- paste(paramPrefix,names(param),sep="")
 				names(param) <- get.geotop.inpts.keyword.value(ids,wpath=rundir,inpts.file=inpts.file)
 				### check Initial Condition
-				
+				if (length(param_bottomlayer)>0) {
+					
+					ids_b <- paste(paramPrefix,names(param_bottomlayer),sep="")
+					names(param_bottomlayer) <- get.geotop.inpts.keyword.value(ids_b,wpath=rundir,inpts.file=inpts.file)
+					
+				}
 				WiltingPoint <- get.geotop.inpts.keyword.value(paste(paramPrefix,"WiltingPoint",sep=""),wpath=rundir,inpts.file=inpts.file)
 				FieldCapacity <- get.geotop.inpts.keyword.value(paste(paramPrefix,"FieldCapacity",sep=""),wpath=rundir,inpts.file=inpts.file)
 				ThetaSat <- get.geotop.inpts.keyword.value(paste(paramPrefix,"ThetaSat",sep=""),wpath=rundir,inpts.file=inpts.file)
@@ -194,25 +205,38 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				print(Dz)
 				
 			}
+			### Adjust bottom layer 
 			
+			dz <- param.soil.df[,Dz]
+			z <- dz/2
+			for(i in 2:length(z)) {
+				z[i] <- z[i-1]+dz[i]/2+dz[i-1]/2
+				
+			}
 			
+			zm <- (z-z[1])/(z[length(z)]-z[1])
 			
 			for (it in names(param)) {
 				
 				param.soil.df[,it] <- param[[it]]
 				
+				
+				if (it %in% names(param_bottomlayer)) {
+					
+					#### DO INTERPOLATION 
+					
+					param.soil.df[,it] <- param[[it]]^(1-zm)*param_bottomlayer[[it]]^zm
+					   
+				}	
+				
 			}
 		
-		
+			
+			
 			if (!is.na(psiGamma)) {
 				print(Dz)
 				print(param.soil.df)
-				dz <- param.soil.df[,Dz]
-				z <- dz/2
-				for(i in 2:length(z)) {
-					z[i] <- z[i-1]+dz[i]/2+dz[i-1]/2
-					
-				}
+				
 				
 				
 				
@@ -246,8 +270,8 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 			gravity <- 9.81 ## m/s^2
 			
 			
-			psi_WP <- -1500 ## J/kg 
-			psi_FC <- -33  ##  J/kg
+			psi_WP <- -1500*1000 ## Pa
+			psi_FC <- -33*1000  ##  Pa
 			
 			psi_WP <- psi_WP/(waterdensity*gravity)*1000 ## converted to water millimiters according to GEOtop
 			psi_FC <- psi_FC/(waterdensity*gravity)*1000 ## converted to water millimiters according to GEOtop
