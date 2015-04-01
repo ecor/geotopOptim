@@ -92,7 +92,7 @@ NULL
 #' @seealso \code{\link{hydroPSO}},\code{\link{gof}}
 #'
 
-geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",...) {
+geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",weights="uniform",...) {
 
 ###		if (is.charecter(fn)) fn <- get(fn)
 	   	if (is.null(gof.expected.value.for.optim))	gof.expected.value.for.optim <- NA
@@ -104,10 +104,10 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 		}
 		print(gof.expected.value.for.optim)
 		
-		out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,...)
+		out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,...)
 		print("out:")
 		print(out)
-		out$gof <- fn(x=out$par,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,...)
+		out$gof <- fn(x=out$par,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=NULL,...)
 		
 		
 		return(out)

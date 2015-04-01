@@ -1,0 +1,95 @@
+\name{approxfunDataFrame}
+\alias{approxfunDataFrame}
+\title{Interpolation on the soil layers}
+\usage{
+approxfunDataFrame(df, z = NULL, zout, formatter = "z\%04d", factor = 10,
+  ...)
+}
+\arguments{
+  \item{df}{data frame or 'zoo' object with (modeled) time
+  series.}
+
+  \item{z}{vector of soil layer depths. Default is
+  \code{NULL} and is taken from column names of \code{df}.}
+
+  \item{zout}{vector of soil layer depth at which \code{df}
+  values are interpoleted with \code{\link{approx}}}
+
+  \item{formatter}{character string with decimal formatter.
+  It is used if \code{z} or {zout} are string vectors.
+  Default is \code{"z\%04d"}.}
+
+  \item{factor}{unt factor used for conversion of \code{z}
+  or {zout} from String vector to numeric vector and
+  viceversa.}
+
+  \item{...}{further argument for \code{\link{approx}}}
+}
+\value{
+The values of the \code{df} quantity interpolated in the
+\code{zout} soil depths.
+}
+\description{
+This function interpolates the values of a
+\code{zt}-variable quantity in layers of a carteain depth.
+}
+\examples{
+data(MuntatschiniB2)
+## OBSERVATION PROCESSING
+
+obs_SWC <- MuntatschiniB2[str_detect(names(MuntatschiniB2),"SWC")]
+zvalues <-  as.numeric(unlist(lapply(X=str_split(names(obs_SWC), pattern="",
+				n = Inf),FUN=function (x) {
+					out <- as.numeric(x)
+				    out <- out[!is.na(out)]
+					out <- paste(out,collapse="")
+				return(out)
+})))
+zformatter = "z\%04d"
+names(obs_SWC) <- sprintf(zformatter,zvalues)
+obs_SWC <- lapply(X=obs_SWC,FUN=function(x){
+
+				if (length(dim(x))>1) {
+					max <- apply(X=x,MARGIN=1,FUN=max,na.rm=TRUE)
+					min <- apply(X=x,MARGIN=1,FUN=min,na.rm=TRUE)
+					mean <- apply(X=x,MARGIN=1,FUN=mean,na.rm=TRUE)
+					sd <- apply(X=x,MARGIN=1,FUN=sd,na.rm=TRUE)
+				} else {
+
+					mean <- as.vector(x)
+				 	max <-  as.vector(x)
+					min <-  as.vector(x)
+					sd <- NA
+
+				}
+				out <- data.frame(min=min,mean=mean,max=max,sd=sd)
+
+				out <- as.zoo(out)
+             index(out) <- as.POSIXlt(index(x))
+
+				return(out)
+
+})
+###########
+###########
+
+
+simpath <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
+bin <-   "/Users/ecor/local/bin/geotop_zh"
+runpath <- "/Users/ecor/ownCloud/job"
+
+vars <- "SoilLiqContentProfileFile"
+
+sim <- geotopZProfile(bin=bin,simpath=simpath,runpath=runpath,
+clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE)[[vars]]
+
+
+sim_approx <- approxfunDataFrame(df=sim,zout=names(obs_SWC),formatter=formatter)
+
+plot(sim$z0020)
+plot(sim_approx$z0020)
+}
+\seealso{
+\code{\link{approx}}
+}
+

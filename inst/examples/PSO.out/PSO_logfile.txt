@@ -1,16 +1,16 @@
 ================================================================================
 hydroPSO version  :  0.3-4  
-hydroPSO Built    :  R 3.1.0; ; 2014-04-24 21:56:34 UTC; unix  
-R version         :  R version 3.1.2 (2014-10-31)  
-Platform          :  x86_64-apple-darwin13.4.0  
+hydroPSO Built    :  R 3.1.2; ; 2015-01-10 02:27:17 UTC; unix  
+R version         :  R version 3.1.1 (2014-07-10)  
+Platform          :  x86_64-apple-darwin13.1.0  
 ================================================================================
-Starting Time     : Fri Mar 27 11:05:16 2015 
+Starting Time     : Wed Apr  1 12:55:39 2015 
 ================================================================================
 Objective Function: fn 
 MinMax            : min 
-Dimension         : 15 
-Nmbr of Particles : 6 
-Max Iterations    : 20 
+Dimension         : 19 
+Nmbr of Particles : 3 
+Max Iterations    : 5 
 Method            : spso2011 
 Topology          : random 
 K                 : 3 
@@ -32,11 +32,11 @@ abstol            : -Inf
 reltol            : 1.49011611938477e-08 
 parallel          : none 
 ================================================================================
-Total fn calls    :  120  
-Nmbr of Iterations:  20  
+Total fn calls    :  15  
+Nmbr of Iterations:  5  
 Regroupings       :  0  
 ================================================================================
-Ending Time       :  Fri Mar 27 12:30:21 2015  
+Ending Time       :  Wed Apr  1 13:17:38 2015  
 ================================================================================
-Elapsed Time      :  1.42 hours  
+Elapsed Time      :  21.98 mins  
 ================================================================================

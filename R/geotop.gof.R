@@ -10,9 +10,11 @@ NULL
 #' 
 #' @param x vector with parameters to calibrate. See \code{param} in  \code{\link{geotopZProfile}} or \code{\link{geotopExec}}
 #' @param geotop.model a list with arguments for \code{\link{geotopZProfile}}. It is used if \code{sim} is \code{NULL}.
+#' @param approx.list list of arguments for \code{\link{approxfunDataFrame}} (optional)
 #' @param sim simulated data as a  object returned by \code{\link{geotopZProfile}}
 #' @param obs observed data 
 #' @param layer layers corresponding to soil depth at whch GOF indices are calculated
+#' @param weights vector of weights to assing to each layer, in case of a weigeted-averaged goodness-of-fit measure over all layers. It is \code{NULL} (Default) the gooness-of-fit measures are separately calculated for each layer. If it is \code{"uniform"}, the weights are uniformly distributed in all layers. 
 #' @param obs_field obs field used in the observation data frame. Deafault is \code{"mean"}, it is used in case varaiables are measured with different sensors at the same depth and location. 
 #' @param gof.mes string(s) containing adopted numerical goodness-of-fit measure. If it is \code{NULL} (Default), all mesasures returned by \code{\link{gof}} are calculated.
 #' @param gof.expected.value.for.optim expected value for goodness-of-fit mesure, e.g. 0 or 1. It is used if this function is called by \code{link{geotopPSO}},\code{link{hydroPSO}} or \code{link{optim}}.
@@ -111,10 +113,10 @@ NULL
 #' ## plot(
 #' #
 
-geotopGOF <- function(x=NULL,geotop.model=NULL,sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,...) {
+geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,...) {
 	 
-	print("x:")
-	print(x)
+	##print("x:")
+	##print(x)
 	
 	if (!is.null(geotop.model)) {
 		
@@ -137,8 +139,25 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,sim=NULL,obs,layer=c("z0005","z00
 		
 	}
 
+	###
+	
+	
+	
+	###
+	##layer0 <- layer
 	layer <- intersect(layer,names(obs))
-	layer <- intersect(layer,names(sim))
+
+	approx.list[["df"]] <- sim
+	approx.list[["zout"]] <- layer
+
+	sim <- do.call(what=approxfunDataFrame,args=approx.list)
+	
+	
+		## SEE 
+		
+		
+	
+
 	
 	if (length(layer)==0) {
 		
@@ -158,9 +177,14 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,sim=NULL,obs,layer=c("z0005","z00
 	m <- merge(obs[[it]],modeled)
 	m <- m[!is.na(m$modeled),]
 	
+	
+	
+	
 	## da provare 
 	
 	val <- gof(obs=m[,obs_field],sim=m$modeled,...)
+
+	
 
 	if (i==1) {
 		
@@ -173,34 +197,58 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,sim=NULL,obs,layer=c("z0005","z00
 	}
 	
 	colnames(out) <- layer
-	
+	outncol <- ncol(out)
 	if (!is.null(gof.mes)) {
 		
 		out <- out[gof.mes,]
 		
 	}
 	
+	## INSERT HERE MARGING
+	#print(out)
+
+	
+	
+	
 	if (!is.null(gof.expected.value.for.optim)) {
 		
 		if (!is.na(gof.expected.value.for.optim)) {
 			
-			if (length(out)>1) {
+		#	if (length(out)>1) {
 				
 				
 				
-			} else {
+		#	} else {
 				
-				out <- as.numeric(out[1])
-			#	print(out)
+			#	out <- as.numeric(out[1])
+			#	print(out) weight
 				out <- abs(out-gof.expected.value.for.optim) ## heck this passage if the optimal is 1 or  0, we consider te minimizad distance Symmetrically!!!
 			#
 			##	stop()
-			}
+		#	}
 			
 		}
 		
 		
 		
+		
+	}
+	
+	####print(weights)
+	if (!is.null(weights)) {
+		str(out)
+		
+		
+		if (weights=="uniform") weights <- array(1/outncol,outncol)
+		
+		if (length(weights)==outncol) {
+			
+			weights <- array(weights,c(length(weights),1))
+			out <- out %*% weights
+			##	print("out:::")
+			###	print(out)
+			
+		}
 		
 	}
 	return(out)

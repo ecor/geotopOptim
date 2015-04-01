@@ -1,7 +1,4 @@
-Neigh1  Neigh2  Neigh3  Neigh4  Neigh5  Neigh6
-Part1  1  2  3  4  6  
-Part2  1  2  3  4    
-Part3  3  5  6      
-Part4  2  4  5      
-Part5  5          
-Part6  1  2  6      
+Neigh1  Neigh2  Neigh3
+Part1  1  2  3
+Part2  1  2  
+Part3  1  2  3
