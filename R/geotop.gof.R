@@ -18,7 +18,8 @@ NULL
 #' @param obs_field obs field used in the observation data frame. Deafault is \code{"mean"}, it is used in case varaiables are measured with different sensors at the same depth and location. 
 #' @param gof.mes string(s) containing adopted numerical goodness-of-fit measure. If it is \code{NULL} (Default), all mesasures returned by \code{\link{gof}} are calculated.
 #' @param gof.expected.value.for.optim expected value for goodness-of-fit mesure, e.g. 0 or 1. It is used if this function is called by \code{link{geotopPSO}},\code{link{hydroPSO}} or \code{link{optim}}.
-#' @param ... further aguments for \code{\link{gof}}
+#' @param output_simulation logical value. If it is \code{TRUE}, function returns a list with the GOF values and the simulated time series
+#' @param ... further aguments for \code{\link{gof}} .
 #' 
 #' @export
 #' @seealso \code{\link{geotopZProfile}},\code{\link{gof}}
@@ -113,7 +114,7 @@ NULL
 #' ## plot(
 #' #
 
-geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,...) {
+geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,...) {
 	 
 	##print("x:")
 	##print(x)
@@ -249,6 +250,19 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 			###	print(out)
 			
 		}
+		
+	}
+	print(output_simulation)
+	str(sim)
+	if (output_simulation==TRUE) {
+		
+		l_out <- list()
+		l_out$gof <- out
+		l_out$sim <- sim
+		
+		out <- l_out 
+		
+		
 		
 	}
 	return(out)

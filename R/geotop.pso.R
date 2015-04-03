@@ -5,7 +5,7 @@ NULL
 #' @param fn function to optimize (minimize or maximize). Default is \code{\link{geotopGOF}}. See \code{\link{hydroPSO}}. 
 #' @param gof.mes string(s) containing adopted numerical goodness-of-fit measure. If it is \code{NULL} (Default), all mesasures returned by \code{\link{gof}} are calculated.
 #' @param gof.expected.value.for.optim expected value for Goodness-of-fit mesure, e.g. 0 or 1. It is used if this function is called by \code{link{geotopPSO}},\code{link{hydroPSO}} or \code{link{optim}}.
-#' 
+#' @param final.run logical value. It is \code{TRUE} (default), simulated time series with optimal set of parameteers are added in the list object returned by the function.
 #' @param ... further arguments for \code{\link{hydroPSO}}.
 #' 
 #' @details The function \code{fn}, in case it is different from the default value \code{\link{geotopGOF}} , must always have the arguments \code{gof.mes} and \code{gof.expected.value.for.optim}.
@@ -92,7 +92,7 @@ NULL
 #' @seealso \code{\link{hydroPSO}},\code{\link{gof}}
 #'
 
-geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",weights="uniform",...) {
+geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",weights="uniform",final.run=TRUE,...) {
 
 ###		if (is.charecter(fn)) fn <- get(fn)
 	   	if (is.null(gof.expected.value.for.optim))	gof.expected.value.for.optim <- NA
@@ -104,12 +104,16 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 		}
 		print(gof.expected.value.for.optim)
 		
-		out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,...)
+		out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,...)
 		print("out:")
 		print(out)
-		out$gof <- fn(x=out$par,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=NULL,...)
+		if (final.run==TRUE) {
+			
+				
+		 		out$gof <- fn(x=out$par,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=NULL,output_simulation=TRUE,...)
 		
-		
+				###out$sim <- do.call(what=approxfunDataFrame,args=approx.list)
+		}
 		return(out)
 		
 

@@ -23,7 +23,7 @@ library(roxygen2)
 options(repos = c(CRAN="http://cran.r-project.org"))
 
 
-path <- "/Users/ecor/ownCloud/activity/R-Packages" 
+path <- "/Users/ecor/Dropbox/R-packages" 
 pkg_name <- "geotopOptim"
 pkg_dir <- paste(path,pkg_name,sep="/")
 cran_pkg_path <- paste(path,"toCran",sep="/")
