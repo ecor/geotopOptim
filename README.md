@@ -1,5 +1,5 @@
-# geotopOptim
-PSO Calibration/Optimization Wrapper R Package for the hydrological model GEOtop.
+
+## geotopOptimPSO Calibration/Optimization Wrapper R Package for the hydrological model GEOtop.
 
 # Installation note on GEOtop 
 
@@ -9,17 +9,7 @@ https://code.google.com/p/geotop/
 https://github.com/se27xx/GEOtop/
 https://github.com/skyglobe/geotop
 
-Fore Unix-like OS users, a C source code can be rapidly downloaded and built with the following instrunctions (https://github.com/se27xx/GEOtop/):
-
-
-1) Open a console and go to the drectory where to clone GEOtop source code;
-3) Clone the source code typing: "git clone https://github.com/se27xx/GEOtop";
-2) Enter GEOtop directory typing: "cd GEOtop";
-3) Create the subdirectory for the executable file  "mkdir bin";
-4) Build and create GEOtop executale file: "make -f geotop.make"
-
-GEOtop executable will be created in the subdirectory "bin".
-
+Fore Unix-like OS users, a C source code can be rapidly downloaded and built as follows:
 
 .... 
 
