@@ -9,8 +9,6 @@ GEOtop (Endrizzi et al, 2014 and references therein) is a distributed model of t
 * https://github.com/se27xx/GEOtop/
 * https://github.com/skyglobe/geotop
 
-
-
 For  Unix-like OS users, a C source code can be rapidly downloaded and built with the following instrunctions (https://github.com/se27xx/GEOtop/):
 
 
@@ -20,7 +18,8 @@ For  Unix-like OS users, a C source code can be rapidly downloaded and built wit
 4. Create the subdirectory for the executable file  "mkdir bin";
 5. Build and create GEOtop executale file: "make -f geotop.make"
 
-GEOtop executable will be created in the subdirectory "bin".
+GEOtop executable will be created in the subdirectory "bin". 
+For other versions of GEOtop, please see the related URLs. 
 
 
 .... 
