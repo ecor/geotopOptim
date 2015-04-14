@@ -1,31 +1,83 @@
 #!/usr/bin/env Rscript
 
+
+
+## Launch example: /Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/example.geotop.pso.R -wpath_out /Users/ecor/ownCloud/job/trial004_KGE
+
 rm(list=ls())
 
-
-
+# LOADING PACKAGES
 library(geotopOptim)
 library(ggplot2)
+
+
+
+##http://stackoverflow.com/questions/2151212/how-can-i-read-command-line-parameters-from-an-r-script
+args<-commandArgs(TRUE)
+### WORKING OUTPUT 
+help_flag <- "--help"
+
+if (length(args)==0) args <- help_flag
+
+simpath_DEF <- Sys.getenv("GEOTOP_DATA")
+bin_DEF     <- Sys.getenv("GEOTOP_BIN")
+wpath_pso_DEF <- Sys.getenv("WPATH_OUT")
+
+if (simapath_DEF=="")   simpath_DEF <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
+if (bin_DEF=="")        bin_DEF <-   "/Users/ecor/ownCloud/geotop_se27xx/GEOtop/bin/geotop-2.0.0"
+if (wpath_pso_DEF=="")   wpath_pso_DEF <- "."
+
+######./example.geotop.pso.R  -wpath_out $WPATH_OUT  -geotopbin $GEOTOP_BIN -wpath_simpath $GEOTOP_DATA 
+
+
+
+
+
+
+
+
+wpath_pso <- argsParser(option="-wpath_out",args=args,novalue_response = wpath_pso_DEF)
+
+print(wpath_pso)
+print(getwd())
+if (class(try(setwd(wpath_pso),silent=TRUE))=="try-error") {
+	
+	dir.create(wpath_pso,recursive=TRUE)
+	
+}
+setwd(wpath_pso)
+print(getwd())
+
+ ###/Users/ecor/local/bin/geotop_zh"
+
+
+
+
+
+simpath <- argsParser(option="-wpath_simpath",args=args,novalue_response=simpath_DEF)
+runpath <- argsParser(option="-wpath_runpath",args=args,novalue_response=wpath_pso)
+bin <- argsParser(option="-geotopbin",args=args,novalue_response=bin_DEF)
+
+
+needHelp <- argsParser(option=help_flag,args=args,novalue_response=FALSE)
+print(needHelp)
+
+if (needHelp==TRUE) {
+	
+	
+	helpco <- readLines(system.file('examples/help/option.txt',package="geotopOptim"))
+    vvout <- lapply(X=helpco,FUN=message)
+	
+	stop("Mandatory Running Arguments missing!! ")
+	
+	
+}
+
 
 set.seed(1223)
 
 data(MuntatschiniB2)
 ## OBSERVATION PROCESSING
-
-##http://stackoverflow.com/questions/2151212/how-can-i-read-command-line-parameters-from-an-r-script
-args<-commandArgs(TRUE)
-### WORKING OUTPUT 
-print(args)
-###wpath_pso <-  "/Users/ecor/ownCloud/job/trial001"
-wpath_pso <- argsParser(option="-wpath_out",args=args,novalue_response = ".")
-
-print(wpath_pso)
-print(getwd())
-setwd(wpath_pso)
-print(getwd())
-
-
-####
  
 
 obs_SWC <- MuntatschiniB2[str_detect(names(MuntatschiniB2),"SWC")]
@@ -66,10 +118,7 @@ obs_SWC <- lapply(X=obs_SWC,FUN=function(x){
 ###########
 
 
-simpath <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
-bin <-   "/Users/ecor/ownCloud/geotop_se27xx/GEOtop/bin/geotop-2.0.0" 
-###/Users/ecor/local/bin/geotop_zh"
-runpath <- "/Users/ecor/ownCloud/job"
+
 #
 t <- str_split(simpath,"/")[[1]]
 simdir <- t[length(t)]

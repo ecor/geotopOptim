@@ -38,6 +38,7 @@ NULL
 
 argsParser <- function(option,args,sep=" ",novalue_response=NULL) {
 	
+	
 	if (is.null(sep)) sep=""
 	if (any(is.na(sep))) sep=""
 	
@@ -48,7 +49,14 @@ argsParser <- function(option,args,sep=" ",novalue_response=NULL) {
 	args <- str_split(args,sep[1])[[1]]
 	args <- args[args!=""]
 	args <- str_trim(args)
-	if (sep[2]!=sep[1]) {
+	
+	
+	if (is.logical(novalue_response)) {
+	
+		
+        out <- (option %in% args) | novalue_response
+		
+	} else if (sep[2]!=sep[1]) {
 		
 		args_s <- str_split(args,sep[2],n=1)
 		

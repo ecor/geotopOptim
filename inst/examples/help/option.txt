@@ -1,0 +1,10 @@
+Rscript File 'example.geotop.pso.R'
+Options: 
+
+-wpath_out            directory for output files
+-geotopbin            GEOtop executable/binary file (full path)
+-wpath_simpath        path to directory containing GEOtop simulation  (i.e. 'geotop.inpts' file)
+-wpath_runpath        directory where to run GEOtop (optional). By default is the same directory given by '-wpath-out'
+--help                help with  'example.geotop.pso.R' options and flags
+
+Usage: ./example.geotop.pso.R  -wpath_out $WPATH_OUT  -geotopbin $GEOTOP_BIN -wpath_simpath $GEOTOP_DATA 
