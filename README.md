@@ -23,10 +23,19 @@ For other versions of GEOtop, please see the related URLs.
 
 ## GEOtop calibration with "geotopOptim"
 
+THe package can be installed within R by following the instruction above: 
 
+* library(devtools)
 
-Rscript File 'example.geotop.pso.R'
-HYDROPSO ALGORITM APPLIED TO GEOTOP HYDROLOGICAL MODEL
+* install_github("ecor/geotopbricks")
+* install_github("ecor/geotopOptim")
+
+For a "geotopOptim" within the R environment, see the package documentation. 
+The package contains an R script whick you can get by typing 'system.file("examples/example.geotop.pso.R",package="geotopOptim")' from the R console.
+This scripts calibrates soil parameters for soil moisture modeling with GEOtop hydrological model. THe calibration algorithm is based on Particle Swarm Optimization. 
+Actually this script works for a 1D (point/local scale) usage of the Hydrological model GEOtop. 
+
+Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
 
 Options: 
 
@@ -41,15 +50,12 @@ Options:
 				   
 --help                help with  'example.geotop.pso.R' options and flags
 
-Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
-Note: This scripts calibrates soil parameters for soil moisture modeling with GEOtop hydrological model. THe calibration algorithm is based on Particle Swarm Optimization. 
-Actually this script works for a 1D (point/local scale) usage of the Hydrological model GEOtop. 
-.... 
 
 
-References: 
 
-* Endrizzi, S., Gruber, S., Dall'Amico, M., and Rigon, R.: GEOtop 2.0: simulating the combined energy and water balance at and below the land surface accounting for soil freezing, snow cover and terrain effects, Geosci. Model Dev., 7, 2831-2857, doi:10.5194/gmd-7-2831-2014, 2014, http://www.geosci-model-dev.net/7/2831/2014/gmd-7-2831-2014.html
+## References: 
+
+* Endrizzi, S., Gruber, S., Dall'Amico, M., and Rigon, R. (2014): GEOtop 2.0: simulating the combined energy and water balance at and below the land surface accounting for soil freezing, snow cover and terrain effects, Geosci. Model Dev., 7, 2831-2857, doi:10.5194/gmd-7-2831-2014, 2014, http://www.geosci-model-dev.net/7/2831/2014/gmd-7-2831-2014.html
 
 * Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model
  calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004
@@ -57,5 +63,7 @@ References:
 *  Zambrano-Bigiarini, M., Rojas, R.(2014). hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models. R
   package version 0.3-4.
 
+* Cordano E.,  Andreis D. and Zottele F. (2015). geotopbricks: An R Plug-in for the Distributed
+  Hydrological Model GEOtop. R package version 1.3.6. http://CRAN.R-project.org/package=geotopbricks
 
 
