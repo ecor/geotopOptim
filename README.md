@@ -24,18 +24,21 @@ For other versions of GEOtop, please see the related URLs.
 ## GEOtop calibration with "geotopOptim"
 
 THe package can be installed within R by following the instruction above: 
+```R
 
 > library(devtools)
 >
 > install_github("ecor/geotopbricks")
 > install_github("ecor/geotopOptim")
 
+```
 For a "geotopOptim" within the R environment, see the package documentation. 
 The package contains an R script whick you can get by typing 'system.file("examples/example.geotop.pso.R",package="geotopOptim")' from the R console.
 This scripts calibrates soil parameters for soil moisture modeling with GEOtop hydrological model. THe calibration algorithm is based on Particle Swarm Optimization. 
 Actually this script works for a 1D (point/local scale) usage of the Hydrological model GEOtop. 
 To run the script, see the usage and the options which can be omitted and replaced by the related enviroment variables:
 
+```
 >
 >Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
 >
@@ -51,7 +54,7 @@ To run the script, see the usage and the options which can be omitted and replac
 >					  See for example: 'system.file("examples/param/param.csv",package="geotopOptim")' from an R console.
 >				   
 >--help                help with  'example.geotop.pso.R' options and flags
-
+```
 
 
 
