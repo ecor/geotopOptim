@@ -2,7 +2,8 @@
 
 
 
-## Launch example: /Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/example.geotop.pso.R -wpath_out /Users/ecor/ownCloud/job/trial004_KGE
+## Launch example: 
+##./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
 
 rm(list=ls())
 
@@ -19,19 +20,15 @@ help_flag <- "--help"
 
 if (length(args)==0) args <- help_flag
 
-simpath_DEF <- Sys.getenv("GEOTOP_DATA")
-bin_DEF     <- Sys.getenv("GEOTOP_BIN")
-wpath_pso_DEF <- Sys.getenv("WPATH_OUT")
+simpath_DEF <- Sys.getenv("GM_GEOTOP_DATA")
+bin_DEF     <- Sys.getenv("GM_GEOTOP_BIN")
+wpath_pso_DEF <- Sys.getenv("GM_WPATH_OUT")
+geotop.soil.param.file_DEF <- Sys.getenv("GM_OPTIM_PARAM_CSV_FILE")
 
 if (simapath_DEF=="")   simpath_DEF <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
 if (bin_DEF=="")        bin_DEF <-   "/Users/ecor/ownCloud/geotop_se27xx/GEOtop/bin/geotop-2.0.0"
 if (wpath_pso_DEF=="")   wpath_pso_DEF <- "."
-
-######./example.geotop.pso.R  -wpath_out $WPATH_OUT  -geotopbin $GEOTOP_BIN -wpath_simpath $GEOTOP_DATA 
-
-
-
-
+if (geotop.soil.param.file_DEF=="") geotop.soil.param.file_DEF <- system.file("examples/param/param.csv",package="geotopOptim")
 
 
 
@@ -57,7 +54,7 @@ print(getwd())
 simpath <- argsParser(option="-wpath_simpath",args=args,novalue_response=simpath_DEF)
 runpath <- argsParser(option="-wpath_runpath",args=args,novalue_response=wpath_pso)
 bin <- argsParser(option="-geotopbin",args=args,novalue_response=bin_DEF)
-
+geotop.soil.param <- argsParser(option="-optim-soil-param",args=args,novalue_response=geotop.soil.param.file_DEF)
 
 needHelp <- argsParser(option=help_flag,args=args,novalue_response=FALSE)
 print(needHelp)
@@ -131,26 +128,7 @@ vars <- "SoilLiqContentProfileFile"
 
 ### Use geotopGOF with an internal GEOtop simulation
 
-## create a list with arguments for geotopGOF
-#
-#x <- param <- c(N=1.4,Alpha=0.0021,ThetaSat=0.5,ThetaRes=0.05,LateralHydrConductivity=0.021,NormalHydrConductivity=0.021)
-#upper <- x*3
-#
-#upper["LateralHydrConductivity"] <- 0.1
-#upper["NormalHydrConductivity"] <- 0.1
-#upper["ThetaSat"] <- 0.55
-#
-#lower <- x/3
-#lower["N"] <- 1.1
-#lower["LateralHydrConductivity"] <- 0
-#lower["NormalHydrConductivity"] <- 0
-#lower["ThetaSat"] <- 0.35
-###### 
-#param.template.file <- ""
-#param.template <- read.table("")
-#####
-#####
-geotop.soil.param.file <- system.file("examples/param/param.csv",package="geotopOptim")
+
 geotop.soil.param <- read.table(geotop.soil.param.file,header=TRUE,sep=",",stringsAsFactors=FALSE)
 lower <- geotop.soil.param$lower
 upper <- geotop.soil.param$upper

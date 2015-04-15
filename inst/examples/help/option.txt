@@ -1,10 +1,19 @@
 Rscript File 'example.geotop.pso.R'
+HYDROPSO ALGORITM APPLIED TO GEOTOP HYDROLOGICAL MODEL
+
 Options: 
 
 -wpath_out            directory for output files
 -geotopbin            GEOtop executable/binary file (full path)
 -wpath_simpath        path to directory containing GEOtop simulation  (i.e. 'geotop.inpts' file)
+					  See for example: 'system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim") from an R console.
+
 -wpath_runpath        directory where to run GEOtop (optional). By default is the same directory given by '-wpath-out'
+-optim-soil-param     full name of the CSV file containing ranges of soil calibration parameter. 
+					  See for example: 'system.file("examples/param/param.csv",package="geotopOptim")' from an R console.
+				   
 --help                help with  'example.geotop.pso.R' options and flags
 
-Usage: ./example.geotop.pso.R  -wpath_out $WPATH_OUT  -geotopbin $GEOTOP_BIN -wpath_simpath $GEOTOP_DATA 
+Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
+Note: This scripts calibrates soil parameters for soil moisture modeling with GEOtop hydrological model. THe calibration algorithm is based on Particle Swarm Optimization. 
+Actually this script works for a 1D (point/local scale) usage of the Hydrological model GEOtop. 

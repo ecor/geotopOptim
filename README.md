@@ -21,12 +21,41 @@ For  Unix-like OS users, a C source code can be rapidly downloaded and built wit
 GEOtop executable will be created in the subdirectory "bin". 
 For other versions of GEOtop, please see the related URLs. 
 
+## GEOtop calibration with "geotopOptim"
 
+
+
+Rscript File 'example.geotop.pso.R'
+HYDROPSO ALGORITM APPLIED TO GEOTOP HYDROLOGICAL MODEL
+
+Options: 
+
+-wpath_out            directory for output files
+-geotopbin            GEOtop executable/binary file (full path)
+-wpath_simpath        path to directory containing GEOtop simulation  (i.e. 'geotop.inpts' file)
+					  See for example: 'system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim") from an R console.
+
+-wpath_runpath        directory where to run GEOtop (optional). By default is the same directory given by '-wpath-out'
+-optim-soil-param     full name of the CSV file containing ranges of soil calibration parameter. 
+					  See for example: 'system.file("examples/param/param.csv",package="geotopOptim")' from an R console.
+				   
+--help                help with  'example.geotop.pso.R' options and flags
+
+Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
+Note: This scripts calibrates soil parameters for soil moisture modeling with GEOtop hydrological model. THe calibration algorithm is based on Particle Swarm Optimization. 
+Actually this script works for a 1D (point/local scale) usage of the Hydrological model GEOtop. 
 .... 
 
 
 References: 
 
-Endrizzi, S., Gruber, S., Dall'Amico, M., and Rigon, R.: GEOtop 2.0: simulating the combined energy and water balance at and below the land surface accounting for soil freezing, snow cover and terrain effects, Geosci. Model Dev., 7, 2831-2857, doi:10.5194/gmd-7-2831-2014, 2014, http://www.geosci-model-dev.net/7/2831/2014/gmd-7-2831-2014.html
-.... 
+* Endrizzi, S., Gruber, S., Dall'Amico, M., and Rigon, R.: GEOtop 2.0: simulating the combined energy and water balance at and below the land surface accounting for soil freezing, snow cover and terrain effects, Geosci. Model Dev., 7, 2831-2857, doi:10.5194/gmd-7-2831-2014, 2014, http://www.geosci-model-dev.net/7/2831/2014/gmd-7-2831-2014.html
+
+* Zambrano-Bigiarini, M.; R. Rojas (2013), A model-independent Particle Swarm Optimisation software for model
+ calibration, Environmental Modelling & Software, 43, 5-25, doi:10.1016/j.envsoft.2013.01.004
+
+*  Zambrano-Bigiarini, M., Rojas, R.(2014). hydroPSO: Particle Swarm Optimisation, with focus on Environmental Models. R
+  package version 0.3-4.
+
+
 
