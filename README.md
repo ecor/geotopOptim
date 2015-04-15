@@ -25,30 +25,32 @@ For other versions of GEOtop, please see the related URLs.
 
 THe package can be installed within R by following the instruction above: 
 
-* library(devtools)
-
-* install_github("ecor/geotopbricks")
-* install_github("ecor/geotopOptim")
+> library(devtools)
+>
+> install_github("ecor/geotopbricks")
+> install_github("ecor/geotopOptim")
 
 For a "geotopOptim" within the R environment, see the package documentation. 
 The package contains an R script whick you can get by typing 'system.file("examples/example.geotop.pso.R",package="geotopOptim")' from the R console.
 This scripts calibrates soil parameters for soil moisture modeling with GEOtop hydrological model. THe calibration algorithm is based on Particle Swarm Optimization. 
 Actually this script works for a 1D (point/local scale) usage of the Hydrological model GEOtop. 
+To run the script, see the usage and the options which can be omitted and replaced by the related enviroment variables:
 
-Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
-
-Options: 
-
--wpath_out            directory for output files
--geotopbin            GEOtop executable/binary file (full path)
--wpath_simpath        path to directory containing GEOtop simulation  (i.e. 'geotop.inpts' file)
-					  See for example: 'system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim") from an R console.
-
--wpath_runpath        directory where to run GEOtop (optional). By default is the same directory given by '-wpath-out'
--optim-soil-param     full name of the CSV file containing ranges of soil calibration parameter. 
-					  See for example: 'system.file("examples/param/param.csv",package="geotopOptim")' from an R console.
-				   
---help                help with  'example.geotop.pso.R' options and flags
+>
+>Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
+>
+>Options: 
+>
+>-wpath_out            directory for output files
+>-geotopbin            GEOtop executable/binary file (full path)
+>-wpath_simpath        path to directory containing GEOtop simulation  (i.e. 'geotop.inpts' file)
+>					  See for example: 'system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim") from an R console.
+>
+>-wpath_runpath        directory where to run GEOtop (optional). By default is the same directory given by '-wpath-out'
+>-optim-soil-param     full name of the CSV file containing ranges of soil calibration parameter. 
+>					  See for example: 'system.file("examples/param/param.csv",package="geotopOptim")' from an R console.
+>				   
+>--help                help with  'example.geotop.pso.R' options and flags
 
 
 
