@@ -79,9 +79,11 @@ geotopZProfile <- function(...,variable=c("SoilAveragedTempProfileFile","SoilLiq
 	out <- lapply(X=out,FUN=function(x,uf,zfrm){
 				
 				out <- x[,str_detect(names(x),"X")]
-				
+				print("zfrm:")
+				print(zfrm)
+				print(names(x))
 				zval <- as.numeric(str_replace(names(out),"X",""))*uf
-				
+				print(zval)
 				names(out) <- sprintf(zfrm,zval)
 				
 				return(out)

@@ -25,7 +25,7 @@ bin_DEF     <- Sys.getenv("GM_GEOTOP_BIN")
 wpath_pso_DEF <- Sys.getenv("GM_WPATH_OUT")
 geotop.soil.param.file_DEF <- Sys.getenv("GM_OPTIM_PARAM_CSV_FILE")
 
-if (simapath_DEF=="")   simpath_DEF <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
+if (simpath_DEF=="")   simpath_DEF <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
 if (bin_DEF=="")        bin_DEF <-   "/Users/ecor/ownCloud/geotop_se27xx/GEOtop/bin/geotop-2.0.0"
 if (wpath_pso_DEF=="")   wpath_pso_DEF <- "."
 if (geotop.soil.param.file_DEF=="") geotop.soil.param.file_DEF <- system.file("examples/param/param.csv",package="geotopOptim")
@@ -54,7 +54,7 @@ print(getwd())
 simpath <- argsParser(option="-wpath_simpath",args=args,novalue_response=simpath_DEF)
 runpath <- argsParser(option="-wpath_runpath",args=args,novalue_response=wpath_pso)
 bin <- argsParser(option="-geotopbin",args=args,novalue_response=bin_DEF)
-geotop.soil.param <- argsParser(option="-optim-soil-param",args=args,novalue_response=geotop.soil.param.file_DEF)
+geotop.soil.param.file <- argsParser(option="-optim-soil-param",args=args,novalue_response=geotop.soil.param.file_DEF)
 
 needHelp <- argsParser(option=help_flag,args=args,novalue_response=FALSE)
 print(needHelp)
@@ -138,7 +138,7 @@ names(upper) <- geotop.soil.param$name
 
 geotop.model <- list(bin=bin,simpath=simpath,runpath=runpath,
 		clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE,names_par=names(upper))
-control <- list(maxit=10,npart=6) ## instead of 10  Maximim 20 iterations!!
+control <- list(maxit=10,npart=6,parallel="multicore") ## instead of 10  Maximim 20 iterations!!
 #control <-   list(maxit=2,npart=1) #list(maxit=5,npart=3) ## instead of 10  Maximim 20 iterations!!
 ######
 

@@ -18,3 +18,5 @@ SoilInitPresL0007,-10000,1000
 SoilInitPresL0008,-10000,1000
 SoilInitPresL0009,-10000,0
 PsiGamma,0.5,1
+SoilDepth,3000,30000
+NumberOfSoilLayers,9,20

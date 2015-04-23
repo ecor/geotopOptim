@@ -134,6 +134,21 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 #			HeaderKthSoilSolids	=	"Kth"
 #			HeaderCthSoilSolids	=	"Cth"
 			
+			## 
+			variable.soil.depth <- FALSE
+			if (all(c("SoilDepth","NumberOfSoilLayers") %in% names(param))) {
+				
+				SoilDepth <- as.numeric(param["SoilDepth"])
+				SurfaceSoilLayer <- as.numeric(param["SurfaceSoilLayer"])
+				
+				NumberOfSoilLayers  <- ceiling(as.numeric(param["NumberOfSoilLayers"]))
+				NumberOfSoilLayers[NumberOfSoilLayers<4] <- 4
+				
+				
+				variable.soil.depth <- TRUE
+				param <- param[!(names(param) %in% c("SoilDepth","NumberOfSoilLayers","SurfaceSoilLayer"))]
+			}
+		
 		
 			if (c("PsiGamma") %in% names(param)) {
 			
@@ -183,6 +198,8 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 			param.soil.df.filename <- sprintf(param.soil.df.filename,layer)
 		###	param.soil.df.filename <<- param.soil.df.filename
 			param.soil.df <- read.table(param.soil.df.filename,header=TRUE,sep=",")
+			
+			
 			if (is.null(paramPrefix)) ParamPrefix <- NA
 			if (!is.na(paramPrefix)) {
 				ids <- paste(paramPrefix,names(param),sep="")
@@ -205,6 +222,43 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				print(Dz)
 				
 			}
+			
+			if (variable.soil.depth==TRUE) {
+				
+				
+				
+				if(is.na(SurfaceSoilLayer)) SurfaceSoilLayer <- param.soil.df[1,Dz]
+				
+				print(SoilDepth)
+				print(SurfaceSoilLayer)
+				param.soil.df <- param.soil.df[1:NumberOfSoilLayers,]
+				
+				param.soil.df[1:NumberOfSoilLayers,] <- param.soil.df[1,]
+				
+				polycoeff <- array(1,NumberOfSoilLayers)
+				polycoeff[1] <- 1-SoilDepth/SurfaceSoilLayer
+				
+				lambda <- polyroot(polycoeff)
+				lambda <- lambda[Re(lambda)>=0]
+				
+				ail <- abs(Im(lambda))
+				
+				print(lambda)
+				lambda <- Re(lambda[which.min(ail)])
+				lambda <- lambda[lambda>=0][1]    ## Get positive or null solution!!
+				param.soil.df[,Dz] <- SurfaceSoilLayer*lambda^(0:(NumberOfSoilLayers-1))
+				
+				### TO TEST!!!
+				
+				
+				
+			}
+			
+			
+			
+			
+			
+			
 			### Adjust bottom layer 
 			
 			dz <- param.soil.df[,Dz]
@@ -317,8 +371,8 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 		
 	}
 	
-	
-	
+	str(out)
+	print(names(out[[1]]))
 	
 	
 	
