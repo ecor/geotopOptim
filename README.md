@@ -55,6 +55,48 @@ To run the script, see the usage and the options which can be omitted and replac
 >				   
 >--help                help with  'example.geotop.pso.R' options and flags
 ```
+## How to set GEOtop calibration parameters with "geotopOptim"
+
+
+The function "geotopPSO" calibrates 1D simulation profile mastering the soil property profile file, often referred as "soil0001.txt". 
+An example for CSV file requested by the option "-optim-soil-param" or the environment variable "GM_OPTIM_PARAM_CSV_FILE" is the following: 
+
+
+
+```
+name,lower,upper
+N,1.45,1.89
+Alpha,0.00131,0.0131
+ThetaSat,0.41,0.53
+ThetaSat_bottomlayer,0.08,0.09
+ThetaRes,0.05,0.07
+LateralHydrConductivity,0.0923,0.1
+NormalHydrConductivity,0.0923,0.1
+LateralHydrConductivity_bottomlayer,0.00923,0.01
+NormalHydrConductivity_bottomlayer,0.00923,0.01
+SoilInitPresL0001,-10000,100
+SoilInitPresL0002,-10000,100
+SoilInitPresL0003,-10000,100
+SoilInitPresL0004,-10000,100
+SoilInitPresL0005,-10000,100
+SoilInitPresL0006,-10000,100
+SoilInitPresL0007,-10000,1000
+SoilInitPresL0008,-10000,1000
+SoilInitPresL0009,-10000,0
+PsiGamma,0.5,1
+SoilDepth,3000,30000
+NumberOfSoilLayers,9,20
+```
+
+where "N", "Alpha", "ThetaSat", "LateralHydrConductivity", "NormalHydrConductivity", "ThetaRes",,.. are GEOtop keyword referred to the respective soil parameters. By default, "geotopPSO" considers soil parameters uniformly distributed within the soil profile unless they are repated in the CSV file with the suffix "_bottomlayer" . In this case, the parameter (upper and lower) values are referred to the first (near surface) layer and the last (bottom) layer and the values of internal layers are exponentially interpolated. In this case a decrease of hydraulic conductivity or soil porosity can be modeled. 
+The keyword "SoilInitPres" refers to the initial soil water pressure head. If the formatter "L%04d" is appended as a suffix, the value is referred to the indicated layer. The keyword "PsiGamma" refers to the soil water pressure gradient along the terrain-normal downward direction and is applied to calculate initial soil water pressure head in the above layers assuming a continuous profile. 
+"SoilDeth" and "NumberOfSoilLayers" refer to the whole soil depth (which now corresponds to the whole soil column used as domain for balance equation integration) and the number of soil layers in which the soil column is divided. Soil layer thickness increase with depth following a geometric progression.
+
+
+
+
+
+
 
 
 
