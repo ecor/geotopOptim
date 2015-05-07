@@ -1,0 +1,9 @@
+load("/Users/ecor/Dropbox/R-packages/geotopOptim/data/MuntatschiniB2.rda")
+source('~/Dropbox/R-packages/geotopOptim/inst/dataset/get_B2_.R', chdir = TRUE)
+source('~/Dropbox/R-packages/geotopOptim/inst/dataset/get_B2_.R', chdir = TRUE)
+source('~/Dropbox/R-packages/geotopOptim/roxygenize.R', chdir = TRUE)
+source('~/Dropbox/R-packages/geotopOptim/roxygenize.R', chdir = TRUE)
+source('~/Dropbox/R-packages/geotopOptim/inst/dataset/get_B2_.R', chdir = TRUE)
+source('~/Dropbox/R-packages/geotopOptim/roxygenize.R', chdir = TRUE)
+source('~/Dropbox/R-packages/geotopOptim/roxygenize.R', chdir = TRUE)
+120/50

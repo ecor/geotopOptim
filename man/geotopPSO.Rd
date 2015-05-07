@@ -4,7 +4,8 @@
 \title{GEOtoop calibration through Particle Swam Optimization}
 \usage{
 geotopPSO(fn = geotopGOF, gof.expected.value.for.optim = NA,
-  gof.mes = "KGE", weights = "uniform", final.run = TRUE, ...)
+  gof.mes = "KGE", weights = "uniform", final.run = TRUE, upper, lower,
+  ...)
 }
 \arguments{
 \item{fn}{function to optimize (minimize or maximize). Default is \code{\link{geotopGOF}}. See \code{\link{hydroPSO}}.}
@@ -14,6 +15,8 @@ geotopPSO(fn = geotopGOF, gof.expected.value.for.optim = NA,
 \item{gof.mes}{string(s) containing adopted numerical goodness-of-fit measure. If it is \code{NULL} (Default), all mesasures returned by \code{\link{gof}} are calculated.}
 
 \item{final.run}{logical value. It is \code{TRUE} (default), simulated time series with optimal set of parameteers are added in the list object returned by the function.}
+
+\item{upper,lower}{see  \code{upper} and \code{lowe} in \code{\link{hydroPSO}}}
 
 \item{...}{further arguments for \code{\link{hydroPSO}}.}
 

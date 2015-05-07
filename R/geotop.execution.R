@@ -80,7 +80,11 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 		runpath="/Users/ecor/ownCloud/job",clean=TRUE,recovery=!clean,getKeywords=NULL,
 		data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",intern=FALSE,param.soil=TRUE,formatter = "%04d",paramPrefix="Header",names_par=NULL,...) {
 	
-	print(simpath)
+#	print("param:")
+#	print(param)
+#	print(names_par)
+#	print(simpath)
+
 	t <- str_split(simpath,"/")[[1]]
 	simdir <- t[length(t)]
 	
@@ -107,6 +111,7 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 	print(names(param))
 	print(param.soil)
 	print(names_par)
+
 	if (!is.null(param)) {
 		
 		if (is.null(names(param))) {
@@ -187,16 +192,69 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				
 				psisoil <- NULL
 			}	
+			print(names(param))
+			if (any(str_detect(names(param),"_V_"))) {
+				
+				
+				iparamLs <- which(str_detect(names(param),"_V_"))
+				
+				
+			    paramLs <- param[iparamLs]
+				
+				nparamLs <- str_sub(names(paramLs),end=-9) ## "_V_L0001" 
+				param <- param[-iparamLs]
+				
+				
+				
+				
+				
+			} else {
+				
+				paramLs <- NULL
+				nparamLs <- NULL
+				
+			}	
+				
 			
 			
 			
+				
+				
+				
+			###	nparamLs <- names(paramLs)
+				
+				
+				
+				
+##				uparamLs <- unique(paramls)
+				
+				
+				
+				
+				
+		#		param_df <- array(NA,c(max(layers),length(uparams)))
+		#		names(param_df) <- 
+						
+				## CONTINUE HERE 
+				## CONTINUE HERE 
+				
+				
+		#		paramL <- TRUE
+				
+				
+				
+		#	} else {
+				
+			#	paramL <- FALSE
+		#	}
 			
 			
-			param.soil.df.filename <- 	get.geotop.inpts.keyword.value("SoilParFile",wpath=rundir,inpts.file=inpts.file,add_wpath=TRUE)
+			
+			param.soil.df.filename <- get.geotop.inpts.keyword.value("SoilParFile",wpath=rundir,inpts.file=inpts.file,add_wpath=TRUE)
 			param.soil.df.filename <- paste(param.soil.df.filename,formatter,".txt",sep="")
 			layer <- 1 
 			param.soil.df.filename <- sprintf(param.soil.df.filename,layer)
-		###	param.soil.df.filename <<- param.soil.df.filename
+			
 			param.soil.df <- read.table(param.soil.df.filename,header=TRUE,sep=",")
 			
 			
@@ -211,6 +269,16 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 					names(param_bottomlayer) <- get.geotop.inpts.keyword.value(ids_b,wpath=rundir,inpts.file=inpts.file)
 					
 				}
+				if (length(nparamLs)>0) {
+					
+					#print(nparamLs)
+					ids_lb <- paste(paramPrefix,nparamLs,sep="")
+					nparamLs <- unlist(get.geotop.inpts.keyword.value(ids_lb,wpath=rundir,inpts.file=inpts.file))
+					#print(nparamLs)
+					
+					
+				}
+				
 				WiltingPoint <- get.geotop.inpts.keyword.value(paste(paramPrefix,"WiltingPoint",sep=""),wpath=rundir,inpts.file=inpts.file)
 				FieldCapacity <- get.geotop.inpts.keyword.value(paste(paramPrefix,"FieldCapacity",sep=""),wpath=rundir,inpts.file=inpts.file)
 				ThetaSat <- get.geotop.inpts.keyword.value(paste(paramPrefix,"ThetaSat",sep=""),wpath=rundir,inpts.file=inpts.file)
@@ -222,6 +290,9 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				print(Dz)
 				
 			}
+			
+			
+			
 			
 			if (variable.soil.depth==TRUE) {
 				
@@ -254,7 +325,48 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				
 			}
 			
+		# INSERT HERE 
+			if (!is.null(paramLs)) {
+				
+				print(paramLs)
+				print("xx")
+				print(names(param.soil.df))
+				
+				
+				
+				layers <- as.numeric(str_sub(names(paramLs),-4))
+				Lscond <- which((nparamLs %in% names(param.soil.df)) & (layers<=nrow(param.soil.df)))
+				print(nparamLs)
+				print("yy")
+				paramLs <- paramLs[Lscond]
+				nparamLs <- nparamLs[Lscond]
+				layers <- layers[Lscond]
+				
+				names(layers) <- names(paramLs)
+				
+				
+				print(paramLs)
+				for (ii in 1:length(paramLs)) {
+				
+						it <- nparamLs[ii]
+						lz <- layers[ii]
+						print(it)
+						print(lz)
+						print(paramLs[ii])
+						param.soil.df[lz,it] <- paramLs[ii]
+				
+				
+				}
+			}
+				
+				
+				
+				
+		      
+		
 			
+			
+			### PUT VARIABLES HERE
 			
 			
 			
@@ -311,6 +423,9 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				}	
 				
 				
+				
+				
+				
 			}
 			
 			
@@ -341,7 +456,7 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 			
 			
 			
-			
+			print("WRITTEN GEOTOP SOIL PARAM FILE")
 			
 			
 		} else {

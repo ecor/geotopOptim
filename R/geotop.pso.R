@@ -6,6 +6,7 @@ NULL
 #' @param gof.mes string(s) containing adopted numerical goodness-of-fit measure. If it is \code{NULL} (Default), all mesasures returned by \code{\link{gof}} are calculated.
 #' @param gof.expected.value.for.optim expected value for Goodness-of-fit mesure, e.g. 0 or 1. It is used if this function is called by \code{link{geotopPSO}},\code{link{hydroPSO}} or \code{link{optim}}.
 #' @param final.run logical value. It is \code{TRUE} (default), simulated time series with optimal set of parameteers are added in the list object returned by the function.
+#' @param upper,lower see  \code{upper} and \code{lowe} in \code{\link{hydroPSO}}
 #' @param ... further arguments for \code{\link{hydroPSO}}.
 #' 
 #' @details The function \code{fn}, in case it is different from the default value \code{\link{geotopGOF}} , must always have the arguments \code{gof.mes} and \code{gof.expected.value.for.optim}.
@@ -92,7 +93,7 @@ NULL
 #' @seealso \code{\link{hydroPSO}},\code{\link{gof}}
 #'
 
-geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",weights="uniform",final.run=TRUE,...) {
+geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",weights="uniform",final.run=TRUE,upper,lower,...) {
 
 ###		if (is.charecter(fn)) fn <- get(fn)
 	   	if (is.null(gof.expected.value.for.optim))	gof.expected.value.for.optim <- NA
@@ -104,7 +105,91 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 		}
 		print(gof.expected.value.for.optim)
 		
-		out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,...)
+		cond_param <- (length(lower)==length(upper)) & setequal(names(lower),names(upper))
+		if (cond_param==TRUE) cond_param <- all(upper[names(lower)]>=lower) & cond_param 
+		if (cond_param==FALSE) {
+			
+			stop("geotopPSO: inconstency between upper and lower values for calibration parameters!")
+			
+		}
+		upper <- upper[names(lower)]
+		###
+		
+		NLAYER <- upper["NumberOfSoilLayers"]
+		
+		if (is.na(NLAYER)) {
+			
+			geotop.model <- list(...)[["geotop.model"]]
+			
+			if (!is.null(geotop.model)) {
+				
+				simpath <- geotop.model$simpath
+				inpts.file <- geotop.model[["inpts.file"]]
+				if (is.null(inpts.file)) inpts.file <- "geotop.inpts"
+
+				soil.df <- get.geotop.inpts.keyword.value("SoilParFile",wpath=simpath,inpts.file=inpts.file,data.frame=TRUE,level=1)
+				NLAYER <- nrow(soil.df)
+				
+				
+				
+			} else {
+				
+				NLAYER <- 20 
+				
+			}
+			
+			
+			
+			
+		}
+			
+			
+		cond_all <- (str_detect(names(lower),"_ALL"))
+		names(cond_all) <- names(lower)
+		
+		if (any(cond_all)==TRUE) {
+			
+			index_all <- which(cond_all)
+			upper_all <- upper[index_all]
+			lower_all <- lower[index_all]
+			upper <- upper[-index_all]
+			lower <- lower[-index_all]
+			
+			names(lower_all) <- str_replace(names(lower_all),"_ALL","_V_L%04d")
+			names(upper_all) <- str_replace(names(upper_all),"_ALL","_V_L%04d")
+			names_all <- names(lower_all)
+			
+			for (it in names_all) {
+			
+				itl <- sprintf(it,1:NLAYER)
+				upper[itl] <- upper_all[it]
+				lower[itl] <- lower_all[it]
+				
+				
+			}
+			
+			
+			
+		}
+		
+		print("LOWER:")
+		
+		print(lower)
+		print("UPPER:")
+		print(upper)
+		
+		###
+		cond_param <- (length(lower)==length(upper)) & setequal(names(lower),names(upper))
+		if (cond_param==TRUE) cond_param <- all(upper[names(lower)]>=lower) & cond_param 
+		if (cond_param==FALSE) {
+			
+			stop("geotopPSO: inconstency between upper and lower values for calibration parameters ()!")
+			
+		}
+		
+		
+		###
+		out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),...)
 		print("out:")
 		print(out)
 		if (final.run==TRUE) {
