@@ -11,9 +11,16 @@ Options:
 -wpath_runpath        directory where to run GEOtop (optional). By default is the same directory given by '-wpath-out'
 -optim-soil-param     full name of the CSV file containing ranges of soil calibration parameter. 
 					  See for example: 'system.file("examples/param/param.csv",package="geotopOptim")' from an R console.
+-obs_rda              *.rda (R binary) file containing observation time series (point sensor data)
+					  See for example: 'system.file("Muntatschini_experiment/Muntatscini",package="geotopOptim") from an R console.
+-obs_ts 			  Name of the variable ('zoo' object) with observation in the (-obs_rda) *.rda (R binary)  file 
+					  
 				   
 --help                help with  'example.geotop.pso.R' options and flags
 
 Usage: ./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
+		
+	    ./example.geotop.pso.obs.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
+	    -obs_rda $GM_OBS_RDAFILE    -obs_ts $GM_OBS_TS
 Note: This scripts calibrates soil parameters for soil moisture modeling with GEOtop hydrological model. THe calibration algorithm is based on Particle Swarm Optimization. 
 Actually this script works for a 1D (point/local scale) usage of the Hydrological model GEOtop. 
