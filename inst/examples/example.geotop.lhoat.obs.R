@@ -78,7 +78,7 @@ if (needHelp==TRUE) {
 
 
 set.seed(1223)
-
+print(obs_rda)
 ## START OBS 
 if (obs_rda=="UseInternalData") {
 	data(MuntatschiniB2)
@@ -169,7 +169,7 @@ names(upper) <- geotop.soil.param$name
 
 geotop.model <- list(bin=bin,simpath=simpath,runpath=runpath,
 		clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE,names_par=NULL) #names(upper))
-control <- list(maxit=50,npart=6,parallel="multicore") ## instead of 10  Maximim 20 iterations!!
+control <- list(parallel="none",f=0.3,N=10) 
 #control <-   list(maxit=2,npart=1) #list(maxit=5,npart=3) ## instead of 10  Maximim 20 iterations!!
 ######
 
@@ -178,45 +178,7 @@ control <- list(maxit=50,npart=6,parallel="multicore") ## instead of 10  Maximim
 dir.create(rundir)
 layer=c("z0005","z0020","z0050")
 #pso <- geotopPSO(obs=obs_SWC,geotop.model=geotop.model,layer=c("z0020"),gof.mes="KGE",lower=lower,upper=upper,control=control)
-pso <- geotopPSO(obs=obs_SWC,geotop.model=geotop.model,layer=layer,gof.mes="KGE",lower=lower,upper=upper,control=control)
+lhoat <- geotoplhoat(obs=obs_SWC,geotop.model=geotop.model,layer=layer,gof.mes="KGE",lower=lower,upper=upper,control=control)
 #####
 
-
-
-
-
-sim_SWC <- pso$gof$sim
-#sim_SWC <- get.geotop.inpts.keyword.value(vars,wpath=rundir,data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",zlayer.formatter="z%04d")
-		
-
-time_sim <- index(obs_SWC[[layer[1]]])
-###[1] "2009-10-01 23:00:00 GMT+1" "2009-10-02 00:00:00 GMT+1"
-time_obs <- index(sim_SWC[,layer[1]])
-#### "2012-10-04 00:00:00 GMT+1" "2012-10-04 01:00:00 GMT+1"
-time <- intersect(time_sim,time_obs)
-
-sim_SWC_t <- sim_SWC[time,]
-obs_SWC_t <- lapply(X=obs_SWC,FUN=function(x,time){x[time,]},time=time)
-df <- NULL
-for (itl in layer) {
-		dfl <- data.frame(time=time,sim=sim_SWC_t[,itl],obs=obs_SWC_t[[itl]][,"mean"],
-				max=obs_SWC_t[[itl]][,"max"],min=obs_SWC_t[[itl]][,"min"])
-		dfl$layer <- itl
-		df <- rbind(df,dfl)	
-	
-
-}
-save(pso,sim_SWC_t,obs_SWC_t,upper=upper,lower=lower,file="pso.rda")
-
-g <- ggplot(df,aes(x=time,y=obs))+geom_line()+geom_line(aes(y=sim,color=3))+geom_ribbon(aes(ymax=max,ymin=min),alpha=0.4)+xlab("Time")+ylab("SWC")
-g <- g+facet_grid(layer ~ ., scale = "fixed")
-#hsc <- ggplot(df,aes(x=sim,y=obs))+geom_point()+geom_ribbon(aes(ymax=max,ymin=min),alpha=0.4)+xlab("Simulated")+ylab("Observed")
-
-png("plot_SWC.png")
-print(g)
-dev.off()
-
-######
-
-
-
+save(lhoat,"lhoat.rda")

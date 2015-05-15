@@ -1,6 +1,10 @@
 NULL
-#' GEOtoop calibration through Particle Swam Optimization 
+#' GEOtop calibration through Particle Swam Optimization
 #'
+#' 
+#' 
+#' 
+#' 
 #' @param par model parameters. See \code{\link{hydroPSO}},\code{\link{geotopGOF}} and \code{\link{geotopExec}}
 #' @param fn function to optimize (minimize or maximize). Default is \code{\link{geotopGOF}}. See \code{\link{hydroPSO}}. 
 #' @param gof.mes string(s) containing adopted numerical goodness-of-fit measure. If it is \code{NULL} (Default), all mesasures returned by \code{\link{gof}} are calculated.
@@ -8,12 +12,19 @@ NULL
 #' @param final.run logical value. It is \code{TRUE} (default), simulated time series with optimal set of parameteers are added in the list object returned by the function.
 #' @param upper,lower see  \code{upper} and \code{lowe} in \code{\link{hydroPSO}}
 #' @param ... further arguments for \code{\link{hydroPSO}}.
-#' 
+#' @param hydroPSOfun  used function name of \code{hydroPSO} package: \code{\link{hydroPSO}} or \code{\link{lhoat}}.
 #' @details The function \code{fn}, in case it is different from the default value \code{\link{geotopGOF}} , must always have the arguments \code{gof.mes} and \code{gof.expected.value.for.optim}.
 #' 
 #' 
-#'@export
-#'
+#' @export
+#' 
+#' @description This function performs a calibration or a senisitivity analyisis of 
+#' the GEOtop Distributed Hydrological Model through a Particle Swam Optimization or LH-OAT method respectively.
+#' This function is a wrapper of \code{\link{hydroPSO}} or \code{\link{lhoat}}. 
+#' The use of either  \code{\link{hydroPSO}} or \code{\link{lhoat}} is declared by the argument \code{hydroPSOfun}.
+#' 
+#' 
+#' @rdname geotopPSO
 #' 
 #' @examples 
 #' 
@@ -87,13 +98,13 @@ NULL
 #' 
 #' pso <- geotopPSO(par=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0020"),gof.mes="KGE",lower=lower,upper=upper,control=control)
 #' 
+#' lhoat <- geotoplhoat(par=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0020"),gof.mes="KGE",lower=lower,upper=upper,control=control)
 #' 
 #' 
-#' 
-#' @seealso \code{\link{hydroPSO}},\code{\link{gof}}
+#' @seealso \code{\link{hydroPSO}},\code{\link{gof}}\code{\link{lhoat}}
 #'
 
-geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",weights="uniform",final.run=TRUE,upper,lower,...) {
+geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE",weights="uniform",final.run=TRUE,upper,lower,...,hydroPSOfun=c("hydroPSO","lhoat")) {
 
 ###		if (is.charecter(fn)) fn <- get(fn)
 	   	if (is.null(gof.expected.value.for.optim))	gof.expected.value.for.optim <- NA
@@ -189,19 +200,51 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 		
 		
 		###
-		out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),...)
-		print("out:")
-		print(out)
-		if (final.run==TRUE) {
+		hydroPSOfun <- hydroPSOfun[1]
+		
+		if (hydroPSOfun=="hydroPSO") {
+			out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),...)
+			print("out:")
+			print(out)
+			if (final.run==TRUE) {
 			
 				
 		 		out$gof <- fn(x=out$par,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=NULL,output_simulation=TRUE,...)
 		
 				###out$sim <- do.call(what=approxfunDataFrame,args=approx.list)
+			}
+		
+		} else if (hydroPSOfun=="lhoat") {
+			
+			out <- lhoat(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),...)
+			
+			
+		} else {
+			
+			out <- NULL
 		}
+		
+		
 		return(out)
 		
 
 
 
+}
+
+NULL
+
+#'
+#' @rdname geotopPSO
+#' @export
+#' 
+
+
+geotoplhoat <- function(...) {
+	
+	out <- geotopPSO(...,hydroPSOfun="lhoat")
+	return(out)
+	
+	
+	
 }

@@ -273,6 +273,7 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		
 		
 	}
+	print(out)
 	return(out)
 	
 	

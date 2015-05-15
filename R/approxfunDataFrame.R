@@ -121,18 +121,33 @@ approxfunDataFrame <- function(df,z=NULL,zout,formatter="z%04d",factor=10,...) {
 	
 	approxm <- function(df=NULL,z,zout,...) {as.vector(approx(x=z,y=df,xout=zout,...)$y)}
 	
+	nzl <- length(zout)
 	
+	if (nzl>1) {
+		print("DF:")
 	
-	out <- df[,rep_len(1:2,length.out=length(zout))] 
+		print("END")
+		out <- df[,rep_len(1:2,length.out=nzl)] 
 	
-	names(out) <- zoutc
+		names(out) <- zoutc
+		print(zout)
+		str(out)
+		out[,] <- NA
 	
-	out[,] <- NA
-	
-	for (i in 1:length(zout)) {
-		out[,i] <- apply(X=as.matrix(df),MARGIN=1,FUN=approxm,z=z,zout=zout[i],...)
+		for (i in 1:nzl) {
+			out[,i] <- apply(X=as.matrix(df),MARGIN=1,FUN=approxm,z=z,zout=zout[i],...)
+		}
+	} else if (nzl==1) {
+		
+		out <- df[,1]
+		out[] <- apply(X=as.matrix(df),MARGIN=1,FUN=approxm,z=z,zout=zout[1],...)
+		
+		
+	} else {
+		
+		out <- NULL
+		
 	}
-	
 	
 	
 	
