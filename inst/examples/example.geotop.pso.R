@@ -28,8 +28,8 @@ geotop.soil.param.file_DEF <- Sys.getenv("GM_OPTIM_PARAM_CSV_FILE")
 if (simpath_DEF=="")   simpath_DEF <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
 if (bin_DEF=="")        bin_DEF <-   "/Users/ecor/ownCloud/geotop_se27xx/GEOtop/bin/geotop-2.0.0"
 if (wpath_pso_DEF=="")   wpath_pso_DEF <- "."
-if (geotop.soil.param.file_DEF=="") geotop.soil.param.file_DEF <- system.file("examples/param/param.csv",package="geotopOptim")
-
+#######if (geotop.soil.param.file_DEF=="") geotop.soil.param.file_DEF <- system.file(Muntatschini_experiment/"examples/param/param.csv",package="geotopOptim")
+if (geotop.soil.param.file_DEF=="") geotop.soil.param.file_DEF <- system.file("Muntatschini_experiment/param_Muntatschini_scenario_002_homo.csv",package="geotopOptim")
 
 
 
