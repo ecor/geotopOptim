@@ -6,6 +6,7 @@ NULL
 #' @param inpts.file GEOtop configuretion \code{*.inpts} file. Default is \code{geotop.inpts}. 
 #' @param simpath directory containg the \code{inpts.file}.
 #' @param runpath directory where to run GEOtop
+#' @param temporary.runpath logical value. If it \code{TRUE} GEOtop is running in a sub-directory of \code{runpath} made with randomly generated name.  Default is \code{FALSE}.
 #' @param intern logical value, see \code{\link{system}}.
 #' @param clean logical value. If it is \code{TRUE} previous simulations and other stuff in \code{runpath} were removed. See \code{\link{file.remove}} for functionality.
 #' @param recovery logical value. If it is \code{TRUE}, GEOtop simulation are recovered or overwriiten according to the GEOtop settings in \code{inpts.file}. 
@@ -77,7 +78,7 @@ NULL
 
 
 geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath,inpts.file="geotop.inpts",
-		runpath="/Users/ecor/ownCloud/job",clean=TRUE,recovery=!clean,getKeywords=NULL,
+		runpath="/Users/ecor/ownCloud/job",temporary.runpath=FALSE,clean=TRUE,recovery=!clean,getKeywords=NULL,
 		data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",intern=FALSE,param.soil=TRUE,formatter = "%04d",paramPrefix="Header",names_par=NULL,...) {
 	
 #	print("param:")
@@ -88,7 +89,60 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 	t <- str_split(simpath,"/")[[1]]
 	simdir <- t[length(t)]
 	
-	rundir <- paste(runpath,simdir,sep="/")
+##	rundir <- paste(runpath,simdir,sep="/")
+	## EC 20150609
+	
+	if (is.null(temporary.runpath)) temporary.runpath <- FALSE
+	if (is.na(temporary.runpath)) temporary.runpath <- FALSE
+	if (temporary.runpath==TRUE) {
+		
+		## EC 20150611
+		    runpath <- paste(runpath,simdir,sep="/")
+			runpath0 <- runpath
+			
+			 
+			 repeat {
+				 
+				runstring <- c(letters,0:9)
+				runstring <- sample(c(sample(runstring),sample(runstring),sample(runstring),sample(runstring)))
+			    nchar <- 20
+				runstring <- paste(runstring[1:nchar],collapse="")
+						 
+			
+				runpath <- paste(runpath0,runstring,sep="/")
+				
+				if (file.exists(runpath)!=TRUE) {
+					break
+				}
+				
+				
+			
+			
+			} 
+			
+			if (file.exists(runpath)==TRUE) {
+				msg <- paste(runpath," already exists!!",sep=" ")
+			
+				stop(msg)
+			}
+			
+			## EC 20150611
+			
+			dir.create(runpath,recursive=TRUE)
+			
+			rundir <- paste(runpath,simdir,sep="/")
+			
+		
+	} else {
+		
+		rundir <- paste(runpath,simdir,sep="/")
+		
+		
+	}
+	
+	## EC 20150609
+	
+	
 	
 	if (recovery==TRUE) clean <- FALSE
 	
@@ -489,7 +543,12 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 	str(out)
 	print(names(out[[1]]))
 	
-	
+	if (temporary.runpath==TRUE) {
+		
+		unlink(runpath,recursive=TRUE)
+		
+		
+	}
 	
 	
 	return(out)

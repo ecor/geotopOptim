@@ -23,9 +23,21 @@ library(ggplot2)
 
 
 ##http://stackoverflow.com/questions/2151212/how-can-i-read-command-line-parameters-from-an-r-script
-args<-commandArgs(TRUE)
+args<- commandArgs(TRUE)
 ### WORKING OUTPUT 
 help_flag <- "--help"
+
+
+### EC 20150609 
+###/Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/example.geotop.lhoat.obs.R 
+wpath_out <- "/Users/ecor/ownCloud/job/trial020lhoat_KGE_variable_layers" 
+param_csv <- "/Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/param/param_2nd.csv" 
+args <- ""
+### END EC 20150609 
+Sys.setenv(GM_WPATH_OUT=wpath_out,GM_OPTIM_PARAM_CSV_FILE=param_csv)
+
+
+
 
 if (length(args)==0) args <- help_flag
 
@@ -177,7 +189,7 @@ names(upper) <- geotop.soil.param$name
 
 
 geotop.model <- list(bin=bin,simpath=simpath,runpath=runpath,
-		clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE,names_par=NULL) #names(upper))
+		clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE,names_par=NULL,temporary.runpath=TRUE) #names(upper))
 control <- list(parallel="parallel",f=0.3,N=10) 
 #control <-   list(maxit=2,npart=1) #list(maxit=5,npart=3) ## instead of 10  Maximim 20 iterations!!
 ######
