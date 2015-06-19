@@ -10,7 +10,7 @@ NULL
 #' 
 #' @param x vector with parameters to calibrate. See \code{param} in  \code{\link{geotopZProfile}} or \code{\link{geotopExec}}
 #' @param geotop.model a list with arguments for \code{\link{geotopZProfile}}. It is used if \code{sim} is \code{NULL}.
-#' @param approx.list list of arguments for \code{\link{approxfunDataFrame}} (optional)
+#' @param approx.list list of arguments for \code{\link{approxfunDataFrame}} (optional) or \code{\link{integratefunDataFrame}} (in this case rember to specify the \code{zrange} argument).
 #' @param sim simulated data as a  object returned by \code{\link{geotopZProfile}}
 #' @param obs observed data 
 #' @param layer layers corresponding to soil depth at whch GOF indices are calculated
@@ -91,7 +91,7 @@ NULL
 #' clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE)
 #' 
 #' gof_geotop <- geotopGOF(x=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0005","z0020"),gof.mes="KGE")
-#' 
+#' gof_geotop <- geotopGOF(x=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0005","z0020"),gof.mes="KGE",useSoilIntegratedValues=FALSE,approx.list=list(zrange=c(0,500))
 #' ## PLAY WITH THE PLOTS!!!!
 #' 
 #' ###
@@ -115,7 +115,7 @@ NULL
 #' ## plot(
 #' #
 
-geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,...) {
+geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,useSoilIntegratedValues=FALSE,...) {
 	 
 	##print("x:")
 	##print(x)
@@ -154,14 +154,30 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	
 	###
 	##layer0 <- layer
-	layer <- intersect(layer,names(obs))
-
-	approx.list[["df"]] <- sim
-	approx.list[["zout"]] <- layer
-
-	sim <- do.call(what=approxfunDataFrame,args=approx.list)
+	
+	if (useSoilIntegratedValues==TRUE) {
+		
+		### TO DO 
+	##	integratefunDataFrame <- function(df,z=NULL,zrange=c(0,500),formatter="z%04d",factor=10,rescaleWithDz=FALSE,...) 
+		approx.list[["df"]] <- sim
+		##approx.list[["zrange"]] <- zrange
+		
+		sim <- do.call(what=integratefunDataFrame,args=approx.list)
+		layer <- layer[1]
 	
 	
+	} else {
+		
+		layer <- intersect(layer,names(obs))
+
+		approx.list[["df"]] <- sim
+		approx.list[["zout"]] <- layer
+
+		sim <- do.call(what=approxfunDataFrame,args=approx.list)
+		
+		
+	
+	} 
 		## SEE 
 		
 		
@@ -178,30 +194,30 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	out <- NULL
 	
 	for (i in 1:length(layer)) {
-	it <- layer[i]	
-	modeled <- sim[,it]
+		it <- layer[i]	
+		modeled <- sim[,it]
 	
 
 	
-	m <- merge(obs[[it]],modeled)
-	m <- m[!is.na(m$modeled),]
+		m <- merge(obs[[it]],modeled)
+		m <- m[!is.na(m$modeled),]
 	
 	
 	
 	
 	## da provare 
 	
-	val <- gof(obs=m[,obs_field],sim=m$modeled,...)
+		val <- gof(obs=m[,obs_field],sim=m$modeled,...)
 
 	
 
-	if (i==1) {
+		if (i==1) {
 		
-		out <- array(NA,c(length(val),length(layer)))
-		rownames(out) <- rownames(val)
+			out <- array(NA,c(length(val),length(layer)))
+			rownames(out) <- rownames(val)
 		
-	}
-	out[,i] <- val
+		}
+		out[,i] <- val
 	
 	}
 	

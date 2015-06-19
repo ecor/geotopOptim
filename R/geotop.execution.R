@@ -16,10 +16,13 @@ NULL
 #' @param formatter character decimal formatter.  See \code{\link{get.geotop.inpts.keyword.value}}. Default is \code{"\%04d"}.
 #' @param param.soil logical value If it \code{TRUE} (default) the vaues in \code{param} concerns soil parameters. 
 #' @param paramPrefix character string. Default is \code{"Header"}. If \code{param.soil==TRUE}, the soil parameters in \code{param} are named with the corrosponding parameter keywords in \code{inpts.file} to which the  string \code{paramPrefix} is attached as a prefix. If \code{paramPrefix} is \code{NA} or \code{NULL} , the names of \code{param} elements must be matched with the corresponimg paramater name in the soil parameter data frame. 
+#' @param SoilType  soil type used for GEOtop Calibration. This must be an ID of the soil types indicated in the \code{inpts.file} of The GEOtop Simulation. Default is 1.  If it is \code{NA} or \code{NULL}, the soil type is extracted from the soil map (\code{SoilMapFile}). 
+#' @param level ID check point of a distributed or quasi-distributed GEOtop simulatiion where to perform the Point Calibration. Default is 1. See \code{\link{get.geotop.inpts.keyword.value}}
+#' @param time.aggregate list of the arguments for \code{\link{aggragete.zoo}}. If it is \code{NULL} (default) no time aggragation is applied to the function outputs. Otherwise, the outputs are aggregated within time intervals. In case of monthly averaged values, it must  be set as \code{list(FUN=mean,by="\%m-\%Y",na.rm=TRUE)} where the \code{by} item is the string format according to POSIX standard for times and dates represented the aggregation interval ( sse \code{\link{strptime}}. 
 #' @param ... further arguments for \code{\link{get.geotop.inpts.keyword.value}}
 #' 
 #' 
-#' @details In this function, implementation, The parameters entered through \code{param} replace  only the ones of  the first (\code{"0001"}) soil type  declared in the GEOtop simulation directory.
+#' @details In this function, implementation, The parameters entered through \code{param} replace  only the ones of  the first (\code{"0001"}) soil type  declared in the GEOtop simulation directory, if \code{SoilType} argument is omitted.
 #' 
 #'  @export
 #' 
@@ -33,7 +36,7 @@ NULL
 #' runpath <- "/Users/ecor/ownCloud/job"
 #' 
 #' vars <- c("SoilAveragedTempProfileFile",	"SoilLiqWaterPressProfileFile",
-#' "SoilLiqContentProfileFile","SoilIceContentProfileFile")
+#' "SoilLiqContentProfileFile","SoilIceContentProfileFile","AvailableSoilWaterContent")
 #' 
 #' 
 #' out <- geotopExec(bin=bin,simpath=simpath,runpath=runpath,
@@ -45,8 +48,14 @@ NULL
 #' 			data.frame=TRUE,level=1,intern=TRUE)
 #' 
 #' 
+#'  ## Monthly-Aggregated Results: 
 #' 
-
+#'  out2 <- geotopExec(param=param,bin=bin,simpath=simpath,
+#' 			runpath=runpath,clean=TRUE,getKeywords=vars,
+#' 			data.frame=TRUE,level=1,intern=TRUE,
+#' 			time.aggregation=list(FUN=mean,by="%m-%Y",na.rm=TRUE))
+#' 
+#' 
 #
 #PointOutputFile	=	"tabs/point"
 #PointAll	=	1
@@ -79,13 +88,17 @@ NULL
 
 geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath,inpts.file="geotop.inpts",
 		runpath="/Users/ecor/ownCloud/job",temporary.runpath=FALSE,clean=TRUE,recovery=!clean,getKeywords=NULL,
-		data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",intern=FALSE,param.soil=TRUE,formatter = "%04d",paramPrefix="Header",names_par=NULL,...) {
+		data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",intern=FALSE,param.soil=TRUE,formatter = "%04d",paramPrefix="Header",names_par=NULL,SoilType=1,level=1,time.aggregate=NULL,...) {
 	
 #	print("param:")
 #	print(param)
 #	print(names_par)
 #	print(simpath)
 
+	
+	
+	
+	
 	t <- str_split(simpath,"/")[[1]]
 	simdir <- t[length(t)]
 	
@@ -166,6 +179,19 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 	print(param.soil)
 	print(names_par)
 
+	if (is.null(SoilType)) SoilType <- NA
+	if (is.na(SoilType)) {
+		
+		
+		SoilType <- extract.geotop.value.fromMap("SoilMapFile",wpath=rundir,inpts.file=inpts.file)[c(level,"SoilMapFile")]
+
+		
+	}
+	
+	
+	
+	
+	
 	if (!is.null(param)) {
 		
 		if (is.null(names(param))) {
@@ -306,8 +332,8 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 			
 			param.soil.df.filename <- get.geotop.inpts.keyword.value("SoilParFile",wpath=rundir,inpts.file=inpts.file,add_wpath=TRUE)
 			param.soil.df.filename <- paste(param.soil.df.filename,formatter,".txt",sep="")
-			layer <- 1 
-			param.soil.df.filename <- sprintf(param.soil.df.filename,layer)
+##			layer <- 1 
+			param.soil.df.filename <- sprintf(param.soil.df.filename,SoilType)
 			
 			param.soil.df <- read.table(param.soil.df.filename,header=TRUE,sep=",")
 			
@@ -527,12 +553,114 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 	cc <- system(command.line,intern=intern) 
 	print(cc)
 	
-
+ 
+	
+	
+	
+	
+	
 	if (length(getKeywords)>0) {
 		
+		
+		getKeywords00 <- getKeywords
+		###  Set Particlar Keywords: 
+		
+		### SET AVAILABLE WATER CONTENT (AGRO-METEOROLOGY) 
+		use_AvailableSWC_keyword <- "AvailableSoilWaterContent"
+		if (c(use_AvailableSWC_keyword) %in% getKeywords) {
+			
+			
+			
+			getKeywords <- unique(c(getKeywords,"SoilLiqContentProfileFile"))
+			getKeywords <- getKeywords[!(getKeywords %in% c(use_AvailableSWC_keyword))]
+			use_AvailableSWC = TRUE
+			
+			
+		} else {
+			
+			use_AvailableSWC = FALSE
+		}
+			
+			
+			
+			
+			
+	    ### END Set Particular Keywords
+		
+		
+		
+		
+		
 	####	date_field0 <<- date_field
-		out <- lapply(X=getKeywords,FUN=get.geotop.inpts.keyword.value,wpath=rundir,inpts.file=inpts.file,data.frame=data.frame,date_field=date_field,formatter=formatter,...)
+		out <- lapply(X=getKeywords,FUN=get.geotop.inpts.keyword.value,wpath=rundir,inpts.file=inpts.file,data.frame=data.frame,date_field=date_field,formatter=formatter,level=level,...)
 		names(out) <- getKeywords
+		
+		if (use_AvailableSWC==TRUE) {
+			
+			## Reread the soil parameters file
+	
+			
+			out[[use_AvailableSWC_keyword]] <- NULL 
+			
+			param.soil.df.filename <- get.geotop.inpts.keyword.value("SoilParFile",wpath=rundir,inpts.file=inpts.file,add_wpath=TRUE)
+			param.soil.df.filename <- paste(param.soil.df.filename,formatter,".txt",sep="")
+#			layer <- 1 
+			param.soil.df.filename <- sprintf(param.soil.df.filename,SoilType)
+			param.soil.df <- read.table(param.soil.df.filename,header=TRUE,sep=",")
+			## wilting point label
+			
+			WiltingPoint <- get.geotop.inpts.keyword.value(paste(paramPrefix,"WiltingPoint",sep=""),wpath=rundir,inpts.file=inpts.file)
+			
+		
+			out[[use_AvailableSWC_keyword]] <- out[["SoilLiqContentProfileFile"]]
+			
+			zcol <- which(str_detect(names(out[[use_AvailableSWC_keyword]]),"X"))
+			
+			for (iz in 1:length(zcol)) {
+				##message(param.soil.df[iz,WiltingPoint])
+				awc <- as.vector(out[["SoilLiqContentProfileFile"]][,zcol[iz]]-param.soil.df[iz,WiltingPoint])
+				awc[awc<0.0] <- 0.0
+				out[[use_AvailableSWC_keyword]][,zcol[iz]] <- awc
+			    
+				if (out[[use_AvailableSWC_keyword]][,zcol[iz]]==out[["SoilLiqContentProfileFile"]][,zcol[iz]]) {
+					
+					stop(iz)
+				}
+			}
+			
+			
+			
+			str(param.soil.df)
+			
+			
+		}
+		
+### TEMPORAL AGGREGATION 
+		
+	if (!is.null(time.aggregate)) {
+		
+		out <- lapply(X=out,FUN=function(x,time.aggregate) {
+					
+					if ((class(time.aggregate[["by"]])=="character") & (length(time.aggregate[["by"]])==1))   {
+						time.aggregate[["by"]] <- as.character(index(x),format=time.aggregate[["by"]])
+					}
+					time.aggregate[["x"]]		<- x 
+					out <- do.call(what="aggregate",args=time.aggregate)
+					
+				},time.aggregate=time.aggregate)
+	
+		
+		
+		
+		
+		
+		
+		
+	}
+
+
+
+		
 		
 	} else {
 		

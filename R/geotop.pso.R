@@ -136,9 +136,11 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 				
 				simpath <- geotop.model$simpath
 				inpts.file <- geotop.model[["inpts.file"]]
+				SoilType <- geotop.model[["SoilType"]]
+				
 				if (is.null(inpts.file)) inpts.file <- "geotop.inpts"
 
-				soil.df <- get.geotop.inpts.keyword.value("SoilParFile",wpath=simpath,inpts.file=inpts.file,data.frame=TRUE,level=1)
+				soil.df <- get.geotop.inpts.keyword.value("SoilParFile",wpath=simpath,inpts.file=inpts.file,data.frame=TRUE,level=SoilType)
 				NLAYER <- nrow(soil.df)
 				
 				
