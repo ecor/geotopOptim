@@ -47,7 +47,7 @@ extract.geotop.value.fromMap <- function (key,xykeys=c("PointFile","HeaderCoordi
 	yheader <- get.geotop.inpts.keyword.value(xykeys[3],wpath=wpath,inpts.file=inpts.file)
 
 	
-	out <- xy_pointfile
+	out <- xy_p ###xy_pointfile
 	
 	if (class(map)=="list")  {
 		

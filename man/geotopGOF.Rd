@@ -7,7 +7,7 @@ geotopGOF(x = NULL, geotop.model = NULL, approx.list = list(),
   sim = NULL, obs, layer = c("z0005", "z0020"), obs_field = "mean",
   gof.mes = NULL, gof.expected.value.for.optim = NULL, weights = NULL,
   output_simulation = FALSE, names_par = NULL,
-  useSoilIntegratedValues = FALSE, ...)
+  useSoilIntegratedValues = FALSE, temporary.runpath = FALSE, ...)
 }
 \arguments{
 \item{x}{vector with parameters to calibrate. See \code{param} in  \code{\link{geotopZProfile}} or \code{\link{geotopExec}}}
@@ -32,7 +32,11 @@ geotopGOF(x = NULL, geotop.model = NULL, approx.list = list(),
 
 \item{output_simulation}{logical value. If it is \code{TRUE}, function returns a list with the GOF values and the simulated time series}
 
-\item{names_par}{}
+\item{names_par}{names of \code{x}}
+
+\item{useSoilIntegratedValues}{logical values. Default is \code{FALSE}. If it is \code{TRUE} output is integrated with a soil thckness through \code{\link{integratefunDataFrame}}.}
+
+\item{temporary.runpath}{logical value. If it \code{TRUE} GEOtop is running in a temporary sub-directory, see \code{\link{geotopExec}}.  Default is \code{FALSE}.}
 
 \item{...}{further aguments for \code{\link{gof}} .}
 }

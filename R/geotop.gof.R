@@ -19,7 +19,9 @@ NULL
 #' @param gof.mes string(s) containing adopted numerical goodness-of-fit measure. If it is \code{NULL} (Default), all mesasures returned by \code{\link{gof}} are calculated.
 #' @param gof.expected.value.for.optim expected value for goodness-of-fit mesure, e.g. 0 or 1. It is used if this function is called by \code{link{geotopPSO}},\code{link{hydroPSO}} or \code{link{optim}}.
 #' @param output_simulation logical value. If it is \code{TRUE}, function returns a list with the GOF values and the simulated time series
-#' @param names_par
+#' @param names_par names of \code{x}
+#' @param temporary.runpath logical value. If it \code{TRUE} GEOtop is running in a temporary sub-directory, see \code{\link{geotopExec}}.  Default is \code{FALSE}.
+#' @param useSoilIntegratedValues logical values. Default is \code{FALSE}. If it is \code{TRUE} output is integrated with a soil thckness through \code{\link{integratefunDataFrame}}.
 #' @param ... further aguments for \code{\link{gof}} .
 #' 
 #' @export
@@ -118,7 +120,7 @@ NULL
 # ## plot(
 #' #
 
-geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,useSoilIntegratedValues=FALSE,...) {
+geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,useSoilIntegratedValues=FALSE,temporary.runpath=FALSE,...) {
 	 
 	##print("x:")
 	##print(x)
@@ -142,6 +144,7 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 			
 		}
 		
+		geotop.model[["temporary.runpath"]] <- temporary.runpath
 		
 		sim <- do.call(what=geotopZProfile,args=geotop.model)
 		sim <- sim[[geotop.model[["variable"]]]]

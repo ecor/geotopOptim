@@ -183,7 +183,7 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 	if (is.na(SoilType)) {
 		
 		
-		SoilType <- extract.geotop.value.fromMap("SoilMapFile",wpath=rundir,inpts.file=inpts.file)[c(level,"SoilMapFile")]
+		SoilType <- extract.geotop.value.fromMap("SoilMapFile",wpath=rundir,inpts.file=inpts.file)[level,"SoilMapFile"]
 
 		
 	}

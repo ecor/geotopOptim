@@ -128,9 +128,13 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 		
 		NLAYER <- upper["NumberOfSoilLayers"]
 		
+		geotop.model <- list(...)[["geotop.model"]]
+		temporary.runpath <- geotop.model[["temporary.runpath"]]
+		
+		
 		if (is.na(NLAYER)) {
 			
-			geotop.model <- list(...)[["geotop.model"]]
+		
 			
 			if (!is.null(geotop.model)) {
 				
@@ -138,9 +142,20 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 				inpts.file <- geotop.model[["inpts.file"]]
 				SoilType <- geotop.model[["SoilType"]]
 				
-				if (is.null(SoilType)) SoilType <- formals(geotopExec)$SoilType
-				
 				if (is.null(inpts.file)) inpts.file <- formals(geotopExec)$inpts.file
+				
+				
+				if (is.null(SoilType)) {
+						
+						
+						level <- geotop.model[["level"]]
+						if (is.null(level)) level <- formals(geotopExec)$level
+						SoilType <- extract.geotop.value.fromMap("SoilMapFile",wpath=simpath,inpts.file=inpts.file)[level,"SoilMapFile"]
+						
+						
+				}
+					
+				 ####SoilType <- formals(geotopExec)$SoilType
 				
 				soil.df <- get.geotop.inpts.keyword.value("SoilParFile",wpath=simpath,inpts.file=inpts.file,data.frame=TRUE,level=SoilType)
 				NLAYER <- nrow(soil.df)
@@ -148,6 +163,8 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 				
 				
 			} else {
+				
+				
 				
 				NLAYER <- 20 
 				
@@ -207,20 +224,20 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 		hydroPSOfun <- hydroPSOfun[1]
 		
 		if (hydroPSOfun=="hydroPSO") {
-			out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),...)
+			out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),temporary.runpath=temporary.runpath,...)
 			print("out:")
 			print(out)
 			if (final.run==TRUE) {
 			
 				
-		 		out$gof <- fn(x=out$par,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=NULL,output_simulation=TRUE,...)
+		 		out$gof <- fn(x=out$par,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=NULL,output_simulation=TRUE,temporary.runpath=FALSE,...)
 		
 				###out$sim <- do.call(what=approxfunDataFrame,args=approx.list)
 			}
 		
 		} else if (hydroPSOfun=="lhoat") {
 			
-			out <- lhoat(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),...)
+			out <- lhoat(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),temporary.runpath=temporary.runpath,...)
 			
 			
 		} else {
