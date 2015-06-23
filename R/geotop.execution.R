@@ -18,7 +18,7 @@ NULL
 #' @param paramPrefix character string. Default is \code{"Header"}. If \code{param.soil==TRUE}, the soil parameters in \code{param} are named with the corrosponding parameter keywords in \code{inpts.file} to which the  string \code{paramPrefix} is attached as a prefix. If \code{paramPrefix} is \code{NA} or \code{NULL} , the names of \code{param} elements must be matched with the corresponimg paramater name in the soil parameter data frame. 
 #' @param SoilType  soil type used for GEOtop Calibration. This must be an ID of the soil types indicated in the \code{inpts.file} of The GEOtop Simulation. Default is 1.  If it is \code{NA} or \code{NULL}, the soil type is extracted from the soil map (\code{SoilMapFile}). 
 #' @param level ID check point of a distributed or quasi-distributed GEOtop simulatiion where to perform the Point Calibration. Default is 1. See \code{\link{get.geotop.inpts.keyword.value}}
-#' @param time.aggregate list of the arguments for \code{\link{aggragete.zoo}}. If it is \code{NULL} (default) no time aggragation is applied to the function outputs. Otherwise, the outputs are aggregated within time intervals. In case of monthly averaged values, it must  be set as \code{list(FUN=mean,by="\%m-\%Y",na.rm=TRUE)} where the \code{by} item is the string format according to POSIX standard for times and dates represented the aggregation interval ( sse \code{\link{strptime}}. 
+#' @param time.aggregate list of the arguments for \code{\link{aggragete.zoo}}. If it is \code{NULL} (default) no time aggragation is applied to the function outputs. Otherwise, the outputs are aggregated within time intervals. In case of monthly averaged values, it must  be set as \code{list(FUN=mean,by="\%Y-\%m",na.rm=TRUE)} where the \code{by} item is the string format according to POSIX standard for times and dates represented the aggregation interval ( sse \code{\link{strptime}}. 
 #' @param ... further arguments for \code{\link{get.geotop.inpts.keyword.value}}
 #' 
 #' 
@@ -53,7 +53,7 @@ NULL
 #'  out2 <- geotopExec(param=param,bin=bin,simpath=simpath,
 #' 			runpath=runpath,clean=TRUE,getKeywords=vars,
 #' 			data.frame=TRUE,level=1,intern=TRUE,
-#' 			time.aggregation=list(FUN=mean,by="%m-%Y",na.rm=TRUE))
+#' 			time.aggregation=list(FUN=mean,by="%Y-%m",na.rm=TRUE))
 #' 
 #' 
 #
@@ -622,10 +622,10 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 				awc[awc<0.0] <- 0.0
 				out[[use_AvailableSWC_keyword]][,zcol[iz]] <- awc
 			    
-				if (out[[use_AvailableSWC_keyword]][,zcol[iz]]==out[["SoilLiqContentProfileFile"]][,zcol[iz]]) {
-					
-					stop(iz)
-				}
+#				if (out[[use_AvailableSWC_keyword]][,zcol[iz]]==out[["SoilLiqContentProfileFile"]][,zcol[iz]]) {
+#					
+#					stop(iz)
+#				}
 			}
 			
 			

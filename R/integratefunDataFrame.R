@@ -69,7 +69,7 @@ NULL
 #' sim <- geotopZProfile(bin=bin,simpath=simpath,runpath=runpath,
 #' clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE)[[vars]]
 #' 
-#' system.time(sim_int <- integratefunDataFrame(df=sim,formatter=formatter))
+#' system.time(sim_int <- integratefunDataFrame(df=sim,formatter=zformatter))
 #' 
 #' 
 
@@ -83,10 +83,9 @@ integratefunDataFrame <- function(df,z=NULL,zrange=c(0,500),formatter="z%04d",fa
 	if (is.null(z)) {
 		
 		zc <- names(df)
-		z <- str_replace_all(zc,"[a-z]","")
-		z <- as.numeric(z)*factor
-		
-		
+		zcf <- str_replace_all(zc,"[a-z]","")
+		z <- as.numeric(zcf)*factor
+				
 	} else {
 		
 		zc <- sprintf(formatter,z/factor)

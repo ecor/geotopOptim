@@ -46,7 +46,7 @@ geotopExec(param = NULL, bin = "/Users/ecor/local/bin/geotop_zh", simpath,
 
 \item{level}{ID check point of a distributed or quasi-distributed GEOtop simulatiion where to perform the Point Calibration. Default is 1. See \code{\link{get.geotop.inpts.keyword.value}}}
 
-\item{time.aggregate}{list of the arguments for \code{\link{aggragete.zoo}}. If it is \code{NULL} (default) no time aggragation is applied to the function outputs. Otherwise, the outputs are aggregated within time intervals. In case of monthly averaged values, it must  be set as \code{list(FUN=mean,by="\%m-\%Y",na.rm=TRUE)} where the \code{by} item is the string format according to POSIX standard for times and dates represented the aggregation interval ( sse \code{\link{strptime}}.}
+\item{time.aggregate}{list of the arguments for \code{\link{aggragete.zoo}}. If it is \code{NULL} (default) no time aggragation is applied to the function outputs. Otherwise, the outputs are aggregated within time intervals. In case of monthly averaged values, it must  be set as \code{list(FUN=mean,by="\%Y-\%m",na.rm=TRUE)} where the \code{by} item is the string format according to POSIX standard for times and dates represented the aggregation interval ( sse \code{\link{strptime}}.}
 
 \item{...}{further arguments for \code{\link{get.geotop.inpts.keyword.value}}}
 }
@@ -79,6 +79,6 @@ out1 <- geotopExec(param=param,bin=bin,simpath=simpath,
  out2 <- geotopExec(param=param,bin=bin,simpath=simpath,
 			runpath=runpath,clean=TRUE,getKeywords=vars,
 			data.frame=TRUE,level=1,intern=TRUE,
-			time.aggregation=list(FUN=mean,by="\%m-\%Y",na.rm=TRUE))
+			time.aggregation=list(FUN=mean,by="\%Y-\%m",na.rm=TRUE))
 }
 

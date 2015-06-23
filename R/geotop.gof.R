@@ -91,28 +91,31 @@ NULL
 #' clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE)
 #' 
 #' gof_geotop <- geotopGOF(x=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0005","z0020"),gof.mes="KGE")
-#' gof_geotop <- geotopGOF(x=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0005","z0020"),gof.mes="KGE",useSoilIntegratedValues=FALSE,approx.list=list(zrange=c(0,500))
-#' ## PLAY WITH THE PLOTS!!!!
 #' 
-#' ###
-#' ###
-#' ###
-#' #modeled <- sim$SoilLiqContentProfileFile$z0020
-#' #observed <- obs_SWC$z0020
-#' #m <- merge(observed,modeled)
-#' #m <- m[!is.na(m$modeled),]
-#' ## Plotting standard deviation of observation vs observed range (max-min)
+#' gof_geotop_ <- geotopGOF(x=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0005","z0020"),gof.mes="KGE",useSoilIntegratedValues=TRUE,approx.list=list(zrange=c(0,500),rescaleWithDz=TRUE))
 #' 
-#' #plot(m$max-m$min,m$modeled-m$min)
-#' #abline(0,1)
-#' #points(m$mean-m$min,m$modeled-m$min,pch=2)
-#' #
-#' # 
-#' #plot(m$sd,m$mean-m$modeled)
-#' #
-#' #
-#' #
-#' ## plot(
+# gof_geotop <- geotopGOF(x=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0005","z0020"),gof.mes="KGE",useSoilIntegratedValues=FALSE,approx.list=list(zrange=c(0,500))
+# ## PLAY WITH THE PLOTS!!!!
+# 
+# ###
+# ###
+# ###
+# #modeled <- sim$SoilLiqContentProfileFile$z0020
+# #observed <- obs_SWC$z0020
+# #m <- merge(observed,modeled)
+# #m <- m[!is.na(m$modeled),]
+# ## Plotting standard deviation of observation vs observed range (max-min)
+# 
+# #plot(m$max-m$min,m$modeled-m$min)
+# #abline(0,1)
+# #points(m$mean-m$min,m$modeled-m$min,pch=2)
+# #
+# # 
+# #plot(m$sd,m$mean-m$modeled)
+# #
+# #
+# #
+# ## plot(
 #' #
 
 geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,useSoilIntegratedValues=FALSE,...) {
@@ -163,8 +166,20 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		##approx.list[["zrange"]] <- zrange
 		
 		sim <- do.call(what=integratefunDataFrame,args=approx.list)
+		if (length(layer)==0) {
+			
+			layer <- "value"
+		}
 		layer <- layer[1]
 	
+		if (class(obs)!="list") {
+			
+			
+			obs <- list(obs)
+			names(obs) <- layer
+			
+		}
+		
 	
 	} else {
 		
@@ -175,6 +190,11 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 
 		sim <- do.call(what=approxfunDataFrame,args=approx.list)
 		
+		if (length(layer)==0) {
+			
+			stop("No layers set!")
+			
+		}
 		
 	
 	} 
@@ -184,11 +204,7 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	
 
 	
-	if (length(layer)==0) {
-		
-		stop("No layers set!")
-		
-	}
+	
 	
 	
 	out <- NULL
@@ -197,13 +213,14 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		it <- layer[i]	
 		modeled <- sim[,it]
 	
-
+#		str(obs)
+#		str(sim)
 	
 		m <- merge(obs[[it]],modeled)
 		m <- m[!is.na(m$modeled),]
 	
-	
-	
+		str(m)
+		print(m[index(m)[1:10],])	
 	
 	## da provare 
 	

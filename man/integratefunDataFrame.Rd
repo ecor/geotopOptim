@@ -77,7 +77,7 @@ vars <- "SoilLiqContentProfileFile"
 sim <- geotopZProfile(bin=bin,simpath=simpath,runpath=runpath,
 clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE)[[vars]]
 
-system.time(sim_int <- integratefunDataFrame(df=sim,formatter=formatter))
+system.time(sim_int <- integratefunDataFrame(df=sim,formatter=zformatter))
 }
 \seealso{
 \code{\link{approx}},\code{\link{integrate}}
