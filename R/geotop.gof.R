@@ -216,8 +216,8 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		it <- layer[i]	
 		modeled <- sim[,it]
 	
-#		str(obs)
-#		str(sim)
+		str(obs)
+		str(sim)
 	
 		m <- merge(obs[[it]],modeled)
 		m <- m[!is.na(m$modeled),]
@@ -227,9 +227,16 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	
 	## da provare 
 	
+	if (nrow(m)>2) {
+		 
 		val <- gof(obs=m[,obs_field],sim=m$modeled,...)
 
-	
+	} else {
+		
+		val <- gof(1:10,1:10,...)
+		val [,] <- NA 
+		
+	}	
 
 		if (i==1) {
 		

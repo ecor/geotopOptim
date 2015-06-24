@@ -141,7 +141,7 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 				simpath <- geotop.model$simpath
 				inpts.file <- geotop.model[["inpts.file"]]
 				SoilType <- geotop.model[["SoilType"]]
-				
+				print(simpath)
 				if (is.null(inpts.file)) inpts.file <- formals(geotopExec)$inpts.file
 				
 				
