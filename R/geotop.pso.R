@@ -94,7 +94,7 @@ NULL
 #' 
 #' geotop.model <- list(bin=bin,simpath=simpath,runpath=runpath,
 #' clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE)
-#' control <- list(maxit=10) ## Maximim 20 iterations!! 
+#' control <- list(maxit=4,npart=2) ## Maximim 4 iterations!! 
 #' 
 #' pso <- geotopPSO(par=x,obs=obs_SWC,geotop.model=geotop.model,layer=c("z0020"),gof.mes="KGE",lower=lower,upper=upper,control=control)
 #' 
@@ -150,8 +150,9 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 						
 						level <- geotop.model[["level"]]
 						if (is.null(level)) level <- formals(geotopExec)$level
-						SoilType <- extract.geotop.value.fromMap("SoilMapFile",wpath=simpath,inpts.file=inpts.file)[level,"SoilMapFile"]
-						
+						SoilType <- tryCatch(extract.geotop.value.fromMap("SoilMapFile",wpath=simpath,inpts.file=inpts.file)[level,"SoilMapFile"],error=function(e) {NA})
+						if (is.null(SoilType)) SoilType <- NA
+						if (is.na(SoilType)) SoilType <- formals(geotopExec)$SoilType
 						
 				}
 					

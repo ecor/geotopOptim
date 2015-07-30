@@ -19,9 +19,14 @@ NULL
 #' wpath <- "/Users/ecor/Dropbox/R-packages/geotopOptim-stuff-SHALINI/exercise/simulation_template"
 #' 
 #' points <- extract.geotop.value.fromMap(key="SoilMapFile",wpath=wpath)
+#' points0 <- extract.geotop.value.fromMap(key=c("SoilMapFile","DemFile"),wpath=wpath)
 #' 
+#' nopoints <- extract.geotop.value.fromMap(key="NoSoilMapFile",wpath=wpath)
+#' nopoints0 <- extract.geotop.value.fromMap(key=c("NoSoilMapFile","DemFile"),wpath=wpath)
+#' nopoints1 <- extract.geotop.value.fromMap(key=c("NoSoilMapFile","NoDemFile"),wpath=wpath)
 #' 
-#' 
+
+
 
 #
 #
@@ -38,26 +43,43 @@ NULL
 
 extract.geotop.value.fromMap <- function (key,xykeys=c("PointFile","HeaderCoordinatePointX","HeaderCoordinatePointY"),wpath,inpts.file="geotop.inpts",...) {
 	
+	
+	## AGGIUNGERE LE POSSIBILITA' CHE NON CI SIA LAMAPPA 
 	out <- NULL
-	map <- get.geotop.inpts.keyword.value(key,raster=TRUE,wpath=wpath,inpts.file=inpts.file,...)
+	map <- tryCatch(get.geotop.inpts.keyword.value(key,raster=TRUE,wpath=wpath,inpts.file=inpts.file,...),error=function(e) {NULL})
 	
-	xy_p <- get.geotop.inpts.keyword.value(xykeys[1],data.frame=TRUE,formatter="",wpath=wpath,inpts.file=inpts.file)
 	
-	xheader <- get.geotop.inpts.keyword.value(xykeys[2],wpath=wpath,inpts.file=inpts.file)
-	yheader <- get.geotop.inpts.keyword.value(xykeys[3],wpath=wpath,inpts.file=inpts.file)
-
+	xy_p <- tryCatch(get.geotop.inpts.keyword.value(xykeys[1],data.frame=TRUE,formatter="",wpath=wpath,inpts.file=inpts.file),error=function(e) {NULL})
+	if (is.null(xy_p)) xy_p <- data.frame(x=NA,y=NA)
+	xheader <- tryCatch(get.geotop.inpts.keyword.value(xykeys[2],wpath=wpath,inpts.file=inpts.file),error=function(e) {NULL})
+	yheader <- tryCatch(get.geotop.inpts.keyword.value(xykeys[3],wpath=wpath,inpts.file=inpts.file),error=function(e) {NULL})
+	str(xy_p)
+	print(xy_p)
 	
 	out <- xy_p ###xy_pointfile
-	
-	if (class(map)=="list")  {
+	if (is.null(map)) {
 		
-		icells <- cellFromXY(map[[1]],xy_p[,c(xheader,yheader)])
+		out[,key] <- NA
 		
-		for (it in names(map)) {
+	} else if (class(map)=="list")  {
+		
+		nonull <- length(which(!sapply(X=map,FUN=is.null)))
+		
+		
+		if (nonull>0) {
 			
-			out[,it] <- map[[it]][icells]
+			icells <- cellFromXY(map[!sapply(X=map,FUN=is.null)][[1]],xy_p[,c(xheader,yheader)])
+		
+			for (it in names(map)) {
+			
+				out[,it] <- map[[it]][icells]
 			
 			
+			} 
+		} else {
+			
+			
+			out[,key] <- NA
 		}
 		
 		
