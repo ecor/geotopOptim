@@ -121,9 +121,9 @@ NULL
 #' #
 
 geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,useSoilIntegratedValues=FALSE,temporary.runpath=FALSE,...) {
-	 
-	#### print("x:")
-	#### print(x)
+	
+	##print("x:")
+	##print(x)
 	
 	if (!is.null(geotop.model)) {
 		
@@ -153,7 +153,7 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		
 		
 	}
-
+	
 	###
 	
 	
@@ -164,7 +164,7 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	if (useSoilIntegratedValues==TRUE) {
 		
 		### TO DO 
-	##	integratefunDataFrame <- function(df,z=NULL,zrange=c(0,500),formatter="z%04d",factor=10,rescaleWithDz=FALSE,...) 
+		##	integratefunDataFrame <- function(df,z=NULL,zrange=c(0,500),formatter="z%04d",factor=10,rescaleWithDz=FALSE,...) 
 		approx.list[["df"]] <- sim
 		##approx.list[["zrange"]] <- zrange
 		
@@ -174,7 +174,7 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 			layer <- "value"
 		}
 		layer <- layer[1]
-	
+		
 		if (class(obs)!="list") {
 			
 			
@@ -183,15 +183,14 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 			
 		}
 		
-	
+		
 	} else {
-		## print(layer)
-		## print(names(obs))
+		
 		layer <- intersect(layer,names(obs))
-
+		
 		approx.list[["df"]] <- sim
 		approx.list[["zout"]] <- layer
-
+		
 		sim <- do.call(what=approxfunDataFrame,args=approx.list)
 		
 		if (length(layer)==0) {
@@ -200,13 +199,13 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 			
 		}
 		
-	
+		
 	} 
-		## SEE 
-		
-		
+	## SEE 
 	
-
+	
+	
+	
 	
 	
 	
@@ -214,85 +213,39 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	out <- NULL
 	
 	for (i in 1:length(layer)) {
-	
-		## str(sim)
 		it <- layer[i]	
-		## print(it)
-		
-	#	## print("modeled:")
-	#	## str(modeled)
-		index(sim) <- as.POSIXlt(index(sim))
-		index(obs[[it]]) <- as.POSIXlt(index(obs[[it]]))
-		
 		modeled <- sim[,it]
-#		## str(modeled)
-#		
-#		## str(index(sim))
-#		## str(index(obs[[it]]))
 		
+		str(obs)
+		str(sim)
 		
-		time_index <- index(sim)[(index(sim) %in% index(obs[[it]]))]
-		## print("TIME")
-		## str(time_index)
-		## print("OBS")
-		## str(obs[[it]])
-		m <- as.data.frame(obs[[it]])[which(index(obs[[it]]) %in% time_index),]
-		m0 <- as.zoo(m)
-		index(m0) <- index(obs[[it]])[which(index(obs[[it]]) %in% time_index)]
-		m0 <- m0
-	
-		## print("M")
-		## str(m)
-		## str(modeled)
-		## str(modeled[time_index])
-		time_index0 <<- time_index
-	
-		modeled0 <<- modeled
-		m$modeled <- as.vector(modeled[time_index])
-		## str(m)
-
-		## str(time_index)
-#		m$time_index <- as.POSIXct(time_index)
-		## str(obs[[it]])
-#		## str(sim)
-		
-##		m <- merge(obs[[it]],modeled)
-## print(names(sim))
-	#	## print("modeled:")
-	#	## print(index(m))
-		## print("end modeled:")
-	##	m <- as.data.frame(m) ## ec 20150308
-	#	## print(m[1:10,])	
-		
+		m <- merge(obs[[it]],modeled)
 		m <- m[!is.na(m$modeled),]
 		
-	#	## str(m)
-	#	## print("M:")
-	#	## print(m[1:10,])	
-	
-	## da provare 
-	## print(obs_field)
-	## str(m[,obs_field]) 
-	## str(m$modeled)
-	if (nrow(m)>2) {
+		str(m)
+		print(m[index(m)[1:10],])	
 		
-		val <- gof(obs=m[,obs_field],sim=m$modeled,...)
-
-	} else {
+		## da provare 
 		
-		val <- gof(1:10,1:10,...)
-		val [,] <- NA 
+		if (nrow(m)>2) {
+			
+			val <- gof(obs=m[,obs_field],sim=m$modeled,...)
+			
+		} else {
+			
+			val <- gof(1:10,1:10,...)
+			val [,] <- NA 
+			
+		}	
 		
-	}	
-
 		if (i==1) {
-		
+			
 			out <- array(NA,c(length(val),length(layer)))
 			rownames(out) <- rownames(val)
-		
+			
 		}
 		out[,i] <- val
-	
+		
 	}
 	
 	colnames(out) <- layer
@@ -304,8 +257,8 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	}
 	
 	## INSERT HERE MARGING
-	### print(out)
-
+	#print(out)
+	
 	
 	
 	
@@ -313,18 +266,18 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		
 		if (!is.na(gof.expected.value.for.optim)) {
 			
-		#	if (length(out)>1) {
-				
-				
-				
-		#	} else {
-				
+			#	if (length(out)>1) {
+			
+			
+			
+			#	} else {
+			
 			#	out <- as.numeric(out[1])
-			#	## print(out) weight
-				out <- abs(out-gof.expected.value.for.optim) ## heck this passage if the optimal is 1 or  0, we consider te minimizad distance Symmetrically!!!
+			#	print(out) weight
+			out <- abs(out-gof.expected.value.for.optim) ## heck this passage if the optimal is 1 or  0, we consider te minimizad distance Symmetrically!!!
 			#
 			##	stop()
-		#	}
+			#	}
 			
 		}
 		
@@ -333,9 +286,9 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		
 	}
 	
-	###### print(weights)
+	####print(weights)
 	if (!is.null(weights)) {
-		## str(out)
+		str(out)
 		
 		
 		if (weights=="uniform") weights <- array(1/outncol,outncol)
@@ -344,14 +297,14 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 			
 			weights <- array(weights,c(length(weights),1))
 			out <- out %*% weights
-			##	## print("out:::")
-			###	## print(out)
+			##	print("out:::")
+			###	print(out)
 			
 		}
 		
 	}
-	## print(output_simulation)
-	## str(sim)
+	print(output_simulation)
+	str(sim)
 	if (output_simulation==TRUE) {
 		
 		l_out <- list()
@@ -363,10 +316,8 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 		
 		
 	}
-	## print(out)
+	print(out)
 	return(out)
 	
 	
 }
-
-

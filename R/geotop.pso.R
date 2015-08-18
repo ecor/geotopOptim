@@ -114,7 +114,7 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 			gof.expected.value.for.optim <- gof(x,x)[gof.mes,1][1]
 			
 		}
-		print(gof.expected.value.for.optim)
+		##print(gof.expected.value.for.optim)
 		
 		cond_param <- (length(lower)==length(upper)) & setequal(names(lower),names(upper))
 		if (cond_param==TRUE) cond_param <- all(upper[names(lower)]>=lower) & cond_param 
@@ -141,7 +141,7 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 				simpath <- geotop.model$simpath
 				inpts.file <- geotop.model[["inpts.file"]]
 				SoilType <- geotop.model[["SoilType"]]
-				print(simpath)
+				##print(simpath)
 				if (is.null(inpts.file)) inpts.file <- formals(geotopExec)$inpts.file
 				
 				
@@ -205,11 +205,11 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 			
 		}
 		
-		print("LOWER:")
+		##print("LOWER:")
 		
-		print(lower)
-		print("UPPER:")
-		print(upper)
+		##print(lower)
+		##print("UPPER:")
+		##print(upper)
 		
 		###
 		cond_param <- (length(lower)==length(upper)) & setequal(names(lower),names(upper))
@@ -226,8 +226,8 @@ geotopPSO <- function(fn=geotopGOF,gof.expected.value.for.optim=NA,gof.mes="KGE"
 		
 		if (hydroPSOfun=="hydroPSO") {
 			out <- hydroPSO(fn=fn,gof.mes=gof.mes,gof.expected.value.for.optim=gof.expected.value.for.optim,weights=weights,output_simulation=FALSE,upper=upper,lower=lower,names_par=names(upper),temporary.runpath=temporary.runpath,...)
-			print("out:")
-			print(out)
+			##print("out:")
+			##print(out)
 			if (final.run==TRUE) {
 			
 				
