@@ -20,5 +20,7 @@ Imports:
     rgdal,stringr
 Suggests:
     soilwater
-URL:
-    https://github.com/ecor/geotopbricks,http://code.google.com/p/geotop/,https://github.com/se27xx/GEOtop,http://www.geosci-model-dev.net/7/2831/2014/gmd-7-2831-2014.html
+URL: https://github.com/ecor/geotopbricks,http://code.google.com/p/
+    geotop/,https://github.com/se27xx/GEOtop,http://www.geosci-model-dev.net/
+    7/2831/2014/gmd-7-2831-2014.html
+RoxygenNote: 5.0.1

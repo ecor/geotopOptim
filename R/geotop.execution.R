@@ -206,7 +206,127 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 			
 		} else if (param.soil==TRUE) {
 			
+			if (any(str_detect(names(param),"SCALAR::"))) {
+				
+				
+			            	
+						##### CHECK Scalar Keywords 
+						
+						## wanrnig: Do not put comments with ! in the same row of the keyword called with SCALAR::...
+						inpts.path <- paste(wpath,inpts.file,sep="/")
+						inpts.vv   <- readLines(inpts.vv)
+						inpts.list <- str_split(inpts.vv,"=")
+						kws <- sapply(X=inpts.list,FUN=function(x){str_trim(x[[1]])})
+						n_params <- str_replece(names(param),"SCALAR::","")
+						ikws <- which(kws %in% n_params) 
+						
+						
+						
+						inpts.vv[ikws] <- paste(kws[ikws],param[kws[ikws]],sep="=")
+						
+						
+						writeLines(inpts.vv,con=inpts.path)
+						## ..... 
+						
+						## .....
+						
+				
+			}
+			##### INSERT SCALAR VALUE 
+			if (any(str_detect(names(param),"VECTOR::"))) {
+				
+				
+				
+				##### CHECK VECTOR Keywords 
+				
+				
+				## SYNTAX: VECTOR::1::<keyword>
+				
+				######
+				
+				nn_params <- names(param)[str_detect(names(param),"VECTOR::")]
+				
+				
+				o_params <- lapply(X=nn_params,FUN=function(x) {
+							
+							xold <- x
+							x <- str_split(xold,"::")[[1]]
+							
+							if (length(x)!=3) {
+								msg <- paste(x,collapse="::")
+								msg <- sprintf("VECTOR INPUT Keyword badly defined: %s",msg)
+								stop(msg)
+							}
+							
+							
+							names(x) <- c("TYPE","INDEX","VARIABLE")
+							
+							x["PARAM"] <- xold
+							
+							
+							return(x)
+							
+							
+							
+						})
+				
+				stop("Work in Progress!!")
+				npams <- sapply(X=o_params,FUN=function(x){x$VARIABLE})
+				indpams <- sapply(X=o_params,FUN=function(x){x$INDEX})
+				
+				n_params <- unique(nam_paramas)
+				
+				value_params <- get.geotop.inpts.keyword.value(n_params,wpath=wpath,inpts.file=inpts.file,numeric=TRUE,sep=",")
+				names(value_params) <- n_params
+				
+				rvalue_params <- lapply(X=n_params,FUN=function(x,old,npams,indpams) {
+							
+							o <- old[[x]]
+							
+							
+							
+							
+							
+							
+						},old=value_params,npams=npams,indpams=indpams)
+				
+				
+				#######
+				
+				## wanrnig: Do not put comments with ! in the same row of the keyword called with SCALAR::...
+				
+				inpts.path <- paste(wpath,inpts.file,sep="/")
+				inpts.vv   <- readLines(inpts.vv)
+				inpts.list <- str_split(inpts.vv,"=")
+				kws <- sapply(X=inpts.list,FUN=function(x){str_trim(x[[1]])})
+				
+				ikws <- which(kws %in% names(param)) 
+				
+				
+				
+				inpts.vv[ikws] <- paste(kws[ikws],param[kws[ikws]],sep="=")
+				
+				
+				writeLines(inpts.vv,con=inpts.path)
+				## ..... 
+				
+				## .....
+				
+				
+			}
+			##### INSERT SCALAR VALUE 
 			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			####
 #			HeaderLateralHydrConductivity	=	"Kh"
 #			HeaderNormalHydrConductivity	=	"Kv"
 #			HeaderThetaRes	=	"vwc_r"
@@ -220,6 +340,12 @@ geotopExec <- function (param=NULL,bin="/Users/ecor/local/bin/geotop_zh",simpath
 #			HeaderCthSoilSolids	=	"Cth"
 			
 			## 
+			
+			
+			
+			
+			
+			
 			variable.soil.depth <- FALSE
 			if (all(c("SoilDepth","NumberOfSoilLayers") %in% names(param))) {
 				

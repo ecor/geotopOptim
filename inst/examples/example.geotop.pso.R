@@ -138,7 +138,7 @@ names(upper) <- geotop.soil.param$name
 
 geotop.model <- list(bin=bin,simpath=simpath,runpath=runpath,
 		clean=TRUE,variable=vars,data.frame=TRUE,level=1,zformatter=zformatter,intern=TRUE,names_par=NULL) #names(upper))
-control <- list(maxit=50,npart=6,parallel="multicore") ## instead of 10  Maximim 20 iterations!!
+control <- list(maxit=2,npart=2,parallel="multicore") ## instead of 10  Maximim 20 iterations!!
 #control <-   list(maxit=2,npart=1) #list(maxit=5,npart=3) ## instead of 10  Maximim 20 iterations!!
 ######
 

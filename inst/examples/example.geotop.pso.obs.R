@@ -30,7 +30,7 @@ obs_ts_DEF  <- Sys.getenv("GM_OBS_TS")
 
 if (simpath_DEF=="")   simpath_DEF <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
 if (bin_DEF=="")        bin_DEF <-   "/Users/ecor/ownCloud/geotop_se27xx/GEOtop/bin/geotop-2.0.0"
-if (wpath_pso_DEF=="")   wpath_pso_DEF <- "."
+if (wpath_pso_DEF=="")   wpath_pso_DEF <- "./pso"
 if (geotop.soil.param.file_DEF=="") geotop.soil.param.file_DEF <- system.file("examples/param/param.csv",package="geotopOptim")
 if (obs_rda_DEF=="") obs_rda_DEF <- "UseInternalData"
 if (obs_ts_DEF=="") obs_ts_DEF <- ""
@@ -38,8 +38,10 @@ if (obs_ts_DEF=="") obs_ts_DEF <- ""
 
 wpath_pso <- argsParser(option="-wpath_out",args=args,novalue_response = wpath_pso_DEF)
 
-print(wpath_pso)
+
 print(getwd())
+
+
 if (class(try(setwd(wpath_pso),silent=TRUE))=="try-error") {
 	
 	dir.create(wpath_pso,recursive=TRUE)
@@ -63,7 +65,6 @@ obs_ts <- argsParser(option="-obs_ts",args=args,novalue_response=obs_ts_DEF)
 		
 		
 needHelp <- argsParser(option=help_flag,args=args,novalue_response=FALSE)
-print(needHelp)
 
 if (needHelp==TRUE) {
 	
