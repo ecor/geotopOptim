@@ -3,6 +3,7 @@
 export(approxfunDataFrame)
 export(argsParser)
 export(extract.geotop.value.fromMap)
+export(geotopExec)
 export(geotopGOF)
 export(geotopPSO)
 export(geotopZProfile)

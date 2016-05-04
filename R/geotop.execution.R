@@ -22,9 +22,9 @@ NULL
 #' @param ... further arguments for \code{\link{get.geotop.inpts.keyword.value}}
 #' 
 #' 
-#' @details In this function, implementation, The parameters entered through \code{param} replace  only the ones of  the first (\code{"0001"}) soil type  declared in the GEOtop simulation directory, if \code{SoilType} argument is omitted.
+#' @details In this function, implementation, The parameters entered through \code{param} replace  only the ones of  the first (\code{"0001"}) soil type  declared in the GEOtop simulation directory, if \code{SoilType} argument is omitted. The elements of the vector \code{\param} must be named with the respective keywords preceded by the prefix \code{SOIL__} if the parameter is a soil property through \code{SoilParFIle} file (see package documentation); \code{SCALAR__} if the parameter is scalar (one numeric value) and assigned directly in the \code{inpts.file} file (e.g. \code{"geotop.inpts"}); \code{VECTOR__[X]__} if the parameter is assigned in the \code{inpts.file} file and is the \code{X}-th element of a vector (e.g. assignments of land use proprties). 
 #' 
-#'  @export
+#' @export
 #' 
 #' @importFrom stringr str_split
 #' @importFrom geotopbricks get.geotop.inpts.keyword.value
