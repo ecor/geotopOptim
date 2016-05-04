@@ -1,6 +1,10 @@
 NULL
 #' GEOtop calibration through Particle Swam Optimization
 #'
+#' This function performs a calibration or a senisitivity analyisis of 
+#' the GEOtop Distributed Hydrological Model through a Particle Swam Optimization or LH-OAT method respectively.
+#' This function is a wrapper of \code{\link{hydroPSO}} or \code{\link{lhoat}}. 
+#' The use of either  \code{\link{hydroPSO}} or \code{\link{lhoat}} is declared by the argument \code{hydroPSOfun}.
 #' 
 #' 
 #' 
@@ -18,11 +22,7 @@ NULL
 #' 
 #' @export
 #' 
-#' @description This function performs a calibration or a senisitivity analyisis of 
-#' the GEOtop Distributed Hydrological Model through a Particle Swam Optimization or LH-OAT method respectively.
-#' This function is a wrapper of \code{\link{hydroPSO}} or \code{\link{lhoat}}. 
-#' The use of either  \code{\link{hydroPSO}} or \code{\link{lhoat}} is declared by the argument \code{hydroPSOfun}.
-#' 
+####@description 
 #' 
 #' @rdname geotopPSO
 #' 
@@ -70,8 +70,8 @@ NULL
 #' 
 #' 
 #' simpath <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
-#' bin <-   "/Users/ecor/local/bin/geotop_zh"
-#' runpath <- "/Users/ecor/ownCloud/job"
+#' bin <-   "/home/ecor/local/geotop/GEOtop/bin/geotop-2.0.0"
+#' runpath <- "/home/ecor/temp/geotopOptim_tests"
 #' 
 #' vars <- "SoilLiqContentProfileFile"
 #' 

@@ -5,7 +5,7 @@
 ## Launch example: 
 ##./example.geotop.pso.R  -wpath_out $GM_WPATH_OUT  -optim-soil-param $GM_OPTIM_PARAM_CSV_FILE -geotopbin $GM_GEOTOP_BIN -wpath_simpath $GM_GEOTOP_DATA 
 
-## /Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/example.geotop.lhoat.obs.R -wpath_out /Users/ecor/ownCloud/job/trial020lhoat_KGE_variable_layers -optim-soil-param /Users/ecor/ownCloud/job/trial14_param/param.csv 
+## /Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/example.geotop.lhoat.obs.R -wpath_out /home/ecor/temp/geotopOptim_tests/trial020lhoat_KGE_variable_layers -optim-soil-param /home/ecor/temp/geotopOptim_tests/trial14_param/param.csv 
 ##
 ##
 ##
@@ -30,7 +30,7 @@ help_flag <- "--help"
 
 ### EC 20150609 
 ###/Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/example.geotop.lhoat.obs.R 
-wpath_out <- "/Users/ecor/ownCloud/job/trial020lhoat_KGE_variable_layers" 
+wpath_out <- "/home/ecor/temp/geotopOptim_tests/trial020lhoat_KGE_variable_layers" 
 param_csv <- "/Users/ecor/Dropbox/R-packages/geotopOptim/inst/examples/param/param_2nd.csv" 
 args <- ""
 ### END EC 20150609 
@@ -69,7 +69,7 @@ if (class(try(setwd(wpath_pso),silent=TRUE))=="try-error") {
 setwd(wpath_pso)
 print(getwd())
 
- ###/Users/ecor/local/bin/geotop_zh"
+ ###/home/ecor/local/geotop/GEOtop/bin/geotop-2.0.0"
 
 
 

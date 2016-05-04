@@ -2,5 +2,5 @@
 #'
 #'
 
-geotopExecutableFile <- "/Users/ecor/local/bin/geotop_zh"
+geotopExecutableFile <- "/home/ecor/local/geotop/GEOtop/bin/geotop-2.0.0"
 

@@ -50,7 +50,7 @@ if (class(try(setwd(wpath_pso),silent=TRUE))=="try-error") {
 setwd(wpath_pso)
 print(getwd())
 
- ###/Users/ecor/local/bin/geotop_zh"
+ ###/home/ecor/local/geotop/GEOtop/bin/geotop-2.0.0"
 
 
 

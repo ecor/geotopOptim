@@ -64,28 +64,29 @@ An example for CSV file requested by the option "-optim-soil-param" or the envir
 
 
 ```
-name,lower,upper
-N,1.45,1.89
-Alpha,0.00131,0.0131
-ThetaSat,0.41,0.53
-ThetaSat_bottomlayer,0.08,0.09
-ThetaRes,0.05,0.07
-LateralHydrConductivity,0.0923,0.1
-NormalHydrConductivity,0.0923,0.1
-LateralHydrConductivity_bottomlayer,0.00923,0.01
-NormalHydrConductivity_bottomlayer,0.00923,0.01
-SoilInitPresL0001,-10000,100
-SoilInitPresL0002,-10000,100
-SoilInitPresL0003,-10000,100
-SoilInitPresL0004,-10000,100
-SoilInitPresL0005,-10000,100
-SoilInitPresL0006,-10000,100
-SoilInitPresL0007,-10000,1000
-SoilInitPresL0008,-10000,1000
-SoilInitPresL0009,-10000,0
-PsiGamma,0.5,1
-SoilDepth,3000,30000
-NumberOfSoilLayers,9,20
+prefix__name,lower,upper
+SOIL__N,1.45,1.89
+SOIL__Alpha,0.00131,0.0131
+SOIL__ThetaSat,0.41,0.53
+SOIL__ThetaSat_bottomlayer,0.08,0.09
+SOIL__ThetaRes,0.05,0.07
+SOIL__LateralHydrConductivity,0.0923,0.1
+SOIL__NormalHydrConductivity,0.0923,0.1
+SOIL__LateralHydrConductivity_bottomlayer,0.00923,0.01
+SOIL__NormalHydrConductivity_bottomlayer,0.00923,0.01
+SOIL__SoilInitPresL0001,-10000,100
+SOIL__SoilInitPresL0002,-10000,100
+SOIL__SoilInitPresL0003,-10000,100
+SOIL__SoilInitPresL0004,-10000,100
+SOIL__SoilInitPresL0005,-10000,100
+SOIL__SoilInitPresL0006,-10000,100
+SOIL__SoilInitPresL0007,-10000,1000
+SOIL__SoilInitPresL0008,-10000,1000
+SOIL__SoilInitPresL0009,-10000,0
+SOIL__PsiGamma,0.5,1
+SOIL__SoilDepth,3000,30000
+SOIL__NumberOfSoilLayers,9,20
+VECTOR_1_LSAI,2,4
 ```
 
 where "N", "Alpha", "ThetaSat", "LateralHydrConductivity", "NormalHydrConductivity", "ThetaRes",,.. are GEOtop keyword referred to the respective soil parameters. By default, "geotopPSO" considers soil parameters uniformly distributed within the soil profile unless they are repated in the CSV file with some suffixes, like "_bottomlayer"  or "_ALL". In "_bottomlayer" case, the parameter (upper and lower) values are referred to the first (near surface) layer and the last (bottom) layer and the values of internal layers are exponentially interpolated. In this case a decrease of hydraulic conductivity or soil porosity can be modeled. In "_ALL" case, soil parameter is taken as variables with soil layers. So the reported values refer to a range for so many soil parameter of the same type how many the soil layers are.

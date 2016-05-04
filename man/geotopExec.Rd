@@ -4,13 +4,14 @@
 \alias{geotopExec}
 \title{Execution of GEOtop Hydrological Model}
 \usage{
-geotopExec(param = NULL, bin = "/Users/ecor/local/bin/geotop_zh", simpath,
-  inpts.file = "geotop.inpts", runpath = "/Users/ecor/ownCloud/job",
-  temporary.runpath = FALSE, clean = TRUE, recovery = !clean,
-  getKeywords = NULL, data.frame = TRUE,
-  date_field = "Date12.DDMMYYYYhhmm.", intern = FALSE, param.soil = TRUE,
-  formatter = "\%04d", paramPrefix = "Header", names_par = NULL,
-  SoilType = 1, level = 1, time.aggregate = NULL, ...)
+geotopExec(param = NULL,
+  bin = "/home/ecor/local/geotop/GEOtop/bin/geotop-2.0.0", simpath,
+  inpts.file = "geotop.inpts",
+  runpath = "/home/ecor/temp/geotopOptim_tests", temporary.runpath = FALSE,
+  clean = TRUE, recovery = !clean, getKeywords = NULL,
+  data.frame = TRUE, date_field = "Date12.DDMMYYYYhhmm.", intern = FALSE,
+  param.soil = TRUE, formatter = "\%04d", paramPrefix = "Header",
+  names_par = NULL, SoilType = 1, level = 1, time.aggregate = NULL, ...)
 }
 \arguments{
 \item{param}{vector of parameters to set for GEOtop simulation. Actually implemented only for soil type parameters. Deafault is \code{NULL}.}
@@ -62,8 +63,8 @@ In this function, implementation, The parameters entered through \code{param} re
 \examples{
 
 simpath <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
-bin <-   "/Users/ecor/local/bin/geotop_zh"
-runpath <- "/Users/ecor/ownCloud/job"
+bin <-   "/home/ecor/local/geotop/GEOtop/bin/geotop-2.0.0"
+runpath <- "/home/ecor/temp/geotopOptim_tests"
 
 vars <- c("SoilAveragedTempProfileFile",	"SoilLiqWaterPressProfileFile",
 "SoilLiqContentProfileFile","SoilIceContentProfileFile","AvailableSoilWaterContent")
@@ -86,5 +87,20 @@ out1 <- geotopExec(param=param,bin=bin,simpath=simpath,
 			time.aggregate=list(FUN=mean,by="\%Y-\%m",na.rm=TRUE))
 
 
+
+ ## SCALAR__ and VECTOR__ input params
+
+param <- c(N=1.4,Alpha=0.0021,ThetaRes=0.05,SCALAR__LSAI=4.2)
+
+out3 <- geotopExec(param=param,bin=bin,simpath=simpath,
+			runpath=runpath,clean=TRUE,getKeywords=vars,
+			data.frame=TRUE,level=1,intern=TRUE)
+
+
+param <- c(N=1.4,Alpha=0.0021,ThetaRes=0.05,VECTOR__1__LSAI=4.2)
+
+out4 <- geotopExec(param=param,bin=bin,simpath=simpath,
+			runpath=runpath,clean=TRUE,getKeywords=vars,
+			data.frame=TRUE,level=1,intern=TRUE)
 }
 

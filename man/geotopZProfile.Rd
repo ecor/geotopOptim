@@ -27,8 +27,8 @@ Execution of GEOtop Hydrological Model and extraction of time series for soil da
 \examples{
 
 simpath <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
-bin <-   "/Users/ecor/local/bin/geotop_zh"
-runpath <- "/Users/ecor/ownCloud/job"
+bin <-   "/home/ecor/local/geotop/GEOtop/bin/geotop-2.0.0"
+runpath <- "/home/ecor/temp/geotopOptim_tests"
 
 vars <- c("SoilAveragedTempProfileFile",	"SoilLiqWaterPressProfileFile",
 "SoilLiqContentProfileFile","SoilIceContentProfileFile")
