@@ -36,7 +36,7 @@ NULL
 #' runpath <- "/home/ecor/temp/geotopOptim_tests"
 #' 
 #' vars <- c("SoilAveragedTempProfileFile",	"SoilLiqWaterPressProfileFile",
-#' "SoilLiqContentProfileFile","SoilIceContentProfileFile","AvailableSoilWaterContent")
+#' "SoilLiqContentProfileFile","SoilIceContentProfileFile","AvailableSoilWaterContent","PointOutputFile")
 #' 
 #' 
 #' out <- geotopExec(bin=bin,simpath=simpath,runpath=runpath,
@@ -71,7 +71,11 @@ NULL
 #' out4 <- geotopExec(param=param,bin=bin,simpath=simpath,
 #' 			runpath=runpath,clean=TRUE,getKeywords=vars,
 #' 			data.frame=TRUE,level=1,intern=TRUE)
-
+#' 
+#' 
+#' 
+#' 
+#' 
 #
 #PointOutputFile	=	"tabs/point"
 #PointAll	=	1
