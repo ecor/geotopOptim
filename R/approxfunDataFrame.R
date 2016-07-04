@@ -124,14 +124,14 @@ approxfunDataFrame <- function(df,z=NULL,zout,formatter="z%04d",factor=10,...) {
 	nzl <- length(zout)
 	
 	if (nzl>1) {
-		print("DF:")
+		#print("DF:")
 	
-		print("END")
+		#print("END")
 		out <- df[,rep_len(1:2,length.out=nzl)] 
 	
-		names(out) <- zoutc
-		print(zout)
-		str(out)
+		#names(out) <- zoutc
+		#print(zout)
+		#str(out)
 		out[,] <- NA
 	
 		for (i in 1:nzl) {

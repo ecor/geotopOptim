@@ -44,6 +44,8 @@ geotopExec(param = NULL,
 
 \item{paramPrefix}{character string. Default is \code{"Header"}. If \code{param.soil==TRUE}, the soil parameters in \code{param} are named with the corrosponding parameter keywords in \code{inpts.file} to which the  string \code{paramPrefix} is attached as a prefix. If \code{paramPrefix} is \code{NA} or \code{NULL} , the names of \code{param} elements must be matched with the corresponimg paramater name in the soil parameter data frame.}
 
+\item{names_par}{OPTIONAL vector of names for \code{param}}
+
 \item{SoilType}{soil type used for GEOtop Calibration. This must be an ID of the soil types indicated in the \code{inpts.file} of The GEOtop Simulation. Default is 1.  If it is \code{NA} or \code{NULL}, the soil type is extracted from the soil map (\code{SoilMapFile}).}
 
 \item{level}{ID check point of a distributed or quasi-distributed GEOtop simulatiion where to perform the Point Calibration. Default is 1. See \code{\link{get.geotop.inpts.keyword.value}}}

@@ -8,7 +8,7 @@ NULL
 #' @param z vector of soil layer depths. Default is \code{NULL} and is taken from column names of \code{df}.
 #' @param zrange  vector of soil layer thickness within which \code{df} values are integrated (or averaged)  with \code{\link{approx}} and then integrated with  \code{\link{integrate}}.
 #' @param formatter character string with decimal formatter. It is used if \code{z} or {zout} are string vectors. Default is \code{"z\%04d"}. 
-#' @param factor unt factor used for conversion of  \code{z} or {zout} from String vector to numeric vector and viceversa.
+#' @param factor unit factor used for conversion of  \code{z} or {zout} from String vector to numeric vector and viceversa.
 #' @param rescaleWithDz logical value. If is \code{TRUE} the integrated value is rescaled with soil thickness (mean). Default is \code{FALSE} and the value is not rescaled.
 #' @param ... further argument for \code{\link{approx}}
 #' 

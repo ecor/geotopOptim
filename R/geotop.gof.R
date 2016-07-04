@@ -27,7 +27,7 @@ NULL
 #' @export
 #' @seealso \code{\link{geotopZProfile}},\code{\link{gof}}
 #' 
-#' @importFrom hydroGOF gof
+#' @importFrom hydroGOF gof 
 #' @examples 
 #' 
 #' data(MuntatschiniB2)
@@ -121,7 +121,7 @@ NULL
 # ## plot(
 #' #
 
-geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,useSoilIntegratedValues=FALSE,temporary.runpath=FALSE,...) {
+geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,layer=c("z0005","z0020"),obs_field="mean",gof.mes=NULL,gof.expected.value.for.optim=NULL,weights=NULL,output_simulation=FALSE,names_par=NULL,useSoilIntegratedValues=FALSE,temporary.runpath=FALSE,multiaggr=TRUE,...) {
 	 
 	#### print("x:")
 	#### print(x)
@@ -223,7 +223,7 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	#	## print("modeled:")
 	#	## str(modeled)
 		index(sim) <- as.POSIXlt(index(sim))
-		index(obs[[it]]) <- as.POSIXlt(index(obs[[it]]))
+		
 		
 		modeled <- sim[,it]
 #		## str(modeled)
@@ -232,53 +232,61 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 #		## str(index(obs[[it]]))
 		
 		
-		time_index <- index(sim)[(index(sim) %in% index(obs[[it]]))]
+		##time_index <- index(sim)[(index(sim) %in% index(obs[[it]]))]
 		## print("TIME")
 		## str(time_index)
 		## print("OBS")
 		## str(obs[[it]])
-		m <- as.data.frame(obs[[it]])[which(index(obs[[it]]) %in% time_index),]
-		m0 <- as.zoo(m)
-		index(m0) <- index(obs[[it]])[which(index(obs[[it]]) %in% time_index)]
-		m0 <- m0
+		
+		## 
+		if (multiaggr==TRUE) {
+			
+			index(obs[[it]]) <- as.POSIXlt(index(obs[[it]]))
+			time_index <- index(sim)[(index(sim) %in% index(obs[[it]]))]
+			m <- as.data.frame(obs[[it]])[which(index(obs[[it]]) %in% time_index),]
+			m0 <- as.zoo(m)
+			index(m0) <- index(obs[[it]])[which(index(obs[[it]]) %in% time_index)]
+			m0 <- m0
+			m$modeled <- as.vector(modeled[time_index])
+			m <- m[!is.na(m$modeled),]
+			obs_m=m[,obs_field]
+			sim_m =m$modeled
+			
+			
+		} else {
+			
+			
+			index(obs) <- as.POSIXlt(index(obs))
+			time_index <- index(sim)[(index(sim) %in% index(obs))]
+			m <- as.data.frame(obs)[which(index(obs) %in% time_index),]
+			
+			
+#			print("sim")
+#			
+#			print(head(index(sim)))
+#			print("obs:")
+#			print(head(index(obs)))
+#			print("m")
+#			str(m)
+#			print("modeled")
+#			str(modeled)
+#			print(time_index[1:5])
+#			##stop("LLL")
+#			iio <<- index(obs)
+#			iis <<- index(sim)
+#			ttm <<- index(m)
+#			ttd <<- time_index
+			m$modeled <- as.vector(modeled[time_index])
+			m <- m[!is.na(m$modeled),]
+			obs_m=m[,it]
+			sim_m=m$modeled
+		}
 	
-		## print("M")
-		## str(m)
-		## str(modeled)
-		## str(modeled[time_index])
-		time_index0 <<- time_index
-	
-		modeled0 <<- modeled
-		m$modeled <- as.vector(modeled[time_index])
-		## str(m)
-
-		## str(time_index)
-#		m$time_index <- as.POSIXct(time_index)
-		## str(obs[[it]])
-#		## str(sim)
+	if ((length(obs_m)>2) & (length(sim_m)>2)) {
 		
-##		m <- merge(obs[[it]],modeled)
-## print(names(sim))
-	#	## print("modeled:")
-	#	## print(index(m))
-		## print("end modeled:")
-	##	m <- as.data.frame(m) ## ec 20150308
-	#	## print(m[1:10,])	
+		val <- gof(obs=obs_m,sim=sim_m,...)
+##		val <- gof(obs=m[,obs_field],sim=m$modeled,...)
 		
-		m <- m[!is.na(m$modeled),]
-		
-	#	## str(m)
-	#	## print("M:")
-	#	## print(m[1:10,])	
-	
-	## da provare 
-	## print(obs_field)
-	## str(m[,obs_field]) 
-	## str(m$modeled)
-	if (nrow(m)>2) {
-		
-		val <- gof(obs=m[,obs_field],sim=m$modeled,...)
-
 	} else {
 		
 		val <- gof(1:10,1:10,...)

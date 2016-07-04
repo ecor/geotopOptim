@@ -16,7 +16,7 @@ integratefunDataFrame(df, z = NULL, zrange = c(0, 500),
 
 \item{formatter}{character string with decimal formatter. It is used if \code{z} or {zout} are string vectors. Default is \code{"z\%04d"}.}
 
-\item{factor}{unt factor used for conversion of  \code{z} or {zout} from String vector to numeric vector and viceversa.}
+\item{factor}{unit factor used for conversion of  \code{z} or {zout} from String vector to numeric vector and viceversa.}
 
 \item{rescaleWithDz}{logical value. If is \code{TRUE} the integrated value is rescaled with soil thickness (mean). Default is \code{FALSE} and the value is not rescaled.}
 

@@ -1,0 +1,299 @@
+---
+title: "Verification GEOtop point simulation"
+author: "Johannes Brenner"
+date: "25. Juni 2015"
+output: html_document
+runtime: shiny
+---
+
+***
+
+This R Markdown document is made interactive using Shiny. To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+***
+
+```{r, include=FALSE}
+
+if(!require(AnalyseGeotop))
+{
+  if(!require("devtools"))
+  {
+    install.packages(devtools)
+    require("devtools")
+  }
+  install_github("AnalyseGeotop", "JBrenn")
+  require("AnalyseGeotop")
+}
+
+if(!require("dygraphs"))
+{
+  install.packages(dygraphs)
+  require("dygraphs")
+}
+
+if(!require("hydroGOF"))
+{
+  install.packages(hydroGOF)
+  require("hydroGOF")
+}
+
+if(!require("ggplot2"))
+{
+  install.packages(ggplot2)
+  require("ggplot2")
+}
+
+
+######wpath <- '/home/ecor/temp/geotopOptim_tests/B2_BeG_017_DVM_001' 
+wpath <- '/home/ecor/temp/geotopOptim_tests/B2_BeG_017_DVM_001_test_1' 
+####'/home/ecor/activity/2016/eurac2016/Incarico_EURAC/Simulations/B2/B2_BeG_017_DVM_001_test_2' 
+#### TO CHECK ...
+
+
+#wpath <- '/home/ecor/activity/2016/eurac2016/Muntatschini_pnt_1_225_B2_004' 
+#wpath <- "/run/user/1000/gvfs/smb-share:server=sdcalp01.eurac.edu,share=data2/Simulations/Simulation_GEOtop_1_225_ZH/Vinschgau/SimTraining/BrJ/HiResAlp/1D/Montecini_pnt_1_225_B2_007/"
+#wpath <- "/run/user/1000/gvfs/smb-share:server=sdcalp01.eurac.edu,share=data2/Simulations/Simulation_GEOtop_1_225_ZH/Vinschgau/SimTraining/BrJ/HiResAlp/1D/Montecini_pnt_1_225_P2_003/"
+#wpath <- "/run/user/1000/gvfs/smb-share:server=sdcalp01.eurac.edu,share=data2/Simulations/Simulation_GEOtop_1_225_ZH/Vinschgau/SimTraining/BrJ/MonaLisa/1D/Kaltern/sim006/"
+
+# obs data
+load(file.path(wpath, "obs", "observation.RData"))
+names(observation) <- c("hour", "day")
+obs <- observation
+#time(obs$hour) <- as.POSIXlt(time(obs$hour))
+
+# sim data  ### WORK HERE 
+if (file.exists(file.path(wpath,"PointOutValidation.RData"))) {
+  load(file.path(wpath,"PointOutValidation.RData"))
+} else {
+  var_out <- GEOtop_ReadValidationData(wpath = wpath, obs = observation, save_rData = T)
+}
+
+varout <- var_out
+
+# adjust datetime: observations -1 hour
+time(obs$hour) <- as.POSIXlt(time(obs$hour))
+time(obs$hour)$mday <- time(obs$hour)$mday - 1
+time(obs$day) <- time(obs$day) - 1
+
+# get hourly lag between obs and sim
+ccf_temp <- stats::ccf(var_out[["air_temperature"]], obs$hour[,"air_temperature"], plot = F, na.action = na.pass)
+lag <- round(ccf_temp$acf[which.max(ccf_temp$acf)],0)
+time(obs$hour)$hour <- time(obs$hour)$hour + lag
+
+# load lookup table
+data("lookup_tbl_observation")
+
+```
+
+#### Interactive Inputs
+
+```{r, echo=FALSE}
+inputPanel(
+  #textInput(inputId = "simFolder", label = "Simulation folder", value = "")
+  
+  selectInput(inputId = "variable", label = "discover variable", choices = dimnames(obs$day)[[2]], selected = "air_temperature"),
+  
+  selectInput(inputId = "add_variable", label = "additional variable (sim)", choices = dimnames(obs$day)[[2]], selected = "rainfall_amount"),
+  
+  radioButtons(inputId = "aggregation", label = "aggregation", choices = c("hour","day","month"), selected = "day", inline = FALSE),
+  
+  radioButtons(inputId = "flux_amount", label = "flux or amount", choices = c("flux","amount"), selected = "flux", inline = FALSE)
+  
+  # radioButtons(inputId = "cum", label = "cumulated or time series", choices = c("time series","cumulated over time"), selected = "time series", inline = FALSE)
+  
+)
+
+```
+
+***
+
+#### Time Series Plot
+
+Cumulated timeseries are only provided for daily data aggregation. Check if your variable of interest is a flux or an amount!
+
+```{r, echo=FALSE}
+
+renderDygraph({
+  
+  name <- input$variable
+  if (grepl("soil_moisture_content",input$variable)) name <- "soil_moisture_content"
+  if (grepl("soil_temperature", input$variable)) name <- "soil_temperature"
+  if (grepl("liquid_soil_water_pressure", input$variable)) name <- "liquid_soil_water_pressure"
+  
+  add_name <- input$add_variable
+  if (grepl("soil_moisture_content",input$add_variable)) add_name <- "soil_moisture_content"
+  if (grepl("soil_temperature", input$add_variable)) add_name <- "soil_temperature"
+  if (grepl("liquid_soil_water_pressure", input$add_variable)) add_name <- "liquid_soil_water_pressure"
+   
+  units <- lookup_tbl_observation$unit[lookup_tbl_observation$obs_var==name]
+  add_units <- lookup_tbl_observation$unit[lookup_tbl_observation$obs_var==add_name]
+  
+  if (input$aggregation=="hour" | input$aggregation=="day")
+  {
+    observation <- obs[[input$aggregation]][,input$variable]
+  } else observation <- obs[["day"]][,input$variable]
+  
+  simulation <- varout[[input$variable]]
+  add_var    <- varout[[input$add_variable]] * (-1)
+  
+  if (input$aggregation=="day" & input$flux_amount=="flux") simulation <- aggregate(simulation, as.Date(time(simulation)), mean, na.rm=T) 
+  if (input$aggregation=="day" & input$flux_amount=="amount") simulation <- aggregate(simulation, as.Date(time(simulation)), sum, na.rm=F)
+  if (input$aggregation=="month" & input$flux_amount=="flux") 
+  {
+    simulation <- aggregate(simulation, as.yearmon(time(simulation)), mean, na.rm=T)
+    observation <- aggregate(observation, as.yearmon(time(observation)), mean, na.rm=T)
+  } 
+  if (input$aggregation=="month" & input$flux_amount=="amount") 
+  {
+    simulation <- aggregate(simulation, as.yearmon(time(simulation)), sum, na.rm=F)
+    observation <- aggregate(observation, as.yearmon(time(observation)), sum, na.rm=F)
+  } 
+  
+  if (input$aggregation=="day")  add_var <- aggregate(add_var, as.Date(time(add_var)), sum, na.rm=T) 
+  if (input$aggregation=="month")  add_var <- aggregate(add_var, as.yearmon(time(add_var)), sum, na.rm=T) 
+  
+ # data <- merge(observation, simulation)
+  
+#   if (input$cum == "cumulated over time" & input$aggregation=="day")
+#   {
+#     if (input$variable=="evapotranspiration" | input$variable=="sensible_heat_flux_in_air" | input$variable=="latent_heat_flux_in_air") {
+#       data <- merge(observation, simulation)
+#       data <- window(x = data, start = as.Date("30-04-2011",format="%d-%m-%Y"), end = as.Date("17-04-2013", format="%d-%m-%Y"))
+#       data <- zoo(na.approx.default(data), time(data))
+#       data <- cumsum(data) 
+#     } else {
+#       data <- merge(observation, simulation)
+#       data <- data[!is.na(data$observation),]
+#       data <- cumsum(data)
+#     }
+# 
+#     
+#     dygraph(data, ylab=paste("[",units,"]",sep="")) %>%
+#       dyRangeSelector() %>%
+#       dyRoller()
+#   } else {
+  
+# from POSIXlt to POSIXct  
+ time(observation) <- as.POSIXct(time(observation))
+ time(add_var) <- as.POSIXct(time(add_var))
+ time(simulation) <- as.POSIXct(time(simulation))
+  
+  
+    data <- merge(add_var, observation, simulation)
+    names(data) <- c( "additional var", "observation", "simulation")
+    
+    dygraph(data, ylab=paste("[",units,"]",sep="")) %>%
+      dyRangeSelector() %>%
+      dyRoller() %>%
+      dySeries(name = "additional var", axis = "y2", stepPlot = TRUE, fillGraph = TRUE, label = paste("[-",add_units,"]",sep=""))
+    
+#  }
+ 
+})
+
+```
+  
+***
+
+####Summary Table on Goodness of Fit (GOF)
+
+Measures for GOF are given for seasons and for the whole data series. Calculation were performed with the hydroGOF R-Package. Type ?gof in RStudio for information on specific GOFs.
+
+```{r, echo=FALSE}
+
+renderDataTable({
+ if (input$aggregation=="hour" | input$aggregation=="day")
+  {
+    observation <- obs[[input$aggregation]][,input$variable]
+  } else observation <- obs[["day"]][,input$variable]
+  
+  simulation <- varout[[input$variable]]
+  
+ if (input$aggregation=="day" & input$flux_amount=="flux") simulation <- aggregate(simulation, as.Date(time(simulation)), mean, na.rm=T) 
+  if (input$aggregation=="day" & input$flux_amount=="amount") simulation <- aggregate(simulation, as.Date(time(simulation)), sum, na.rm=F)
+  if (input$aggregation=="month" & input$flux_amount=="flux") 
+  {
+    simulation <- aggregate(simulation, as.yearmon(time(simulation)), mean, na.rm=T)
+    observation <- aggregate(observation, as.yearmon(time(observation)), mean, na.rm=T)
+  } 
+  if (input$aggregation=="month" & input$flux_amount=="amount") 
+  {
+    simulation <- aggregate(simulation, as.yearmon(time(simulation)), sum, na.rm=F)
+    observation <- aggregate(observation, as.yearmon(time(observation)), sum, na.rm=F)
+  } 
+  
+  time(observation) <- as.POSIXct(time(observation))
+  time(simulation) <- as.POSIXct(time(simulation))
+  
+  data <- merge(observation, simulation)
+  
+  gofs <- gof(sim = data$simulation, obs=data$observation, na.rm = T)
+  gofs <- as.data.frame(gofs)
+  names(gofs) <- "YEAR"
+  gofs$GOF <- dimnames(gofs)[[1]]
+  
+  mon <- as.numeric(format(time(data), "%m"))
+  
+  datadjf <-  data[mon==12 | mon==1 | mon==2,]
+  gofs$DJF <-  c(gof(sim = datadjf$simulation, obs=datadjf$observation, na.rm = T))
+  datamam <-  data[mon==3 | mon==4 | mon==5,]
+  gofs$MAM <-  c(gof(sim = datamam$simulation, obs=datamam$observation, na.rm = T))
+  datajja <-  data[mon==6 | mon==7 | mon==8,]
+  gofs$JJA <-  c(gof(sim = datajja$simulation, obs=datajja$observation, na.rm = T))
+  datason <-  data[mon==9 | mon==10 | mon==11,]
+  gofs$SON <-  c(gof(sim = datason$simulation, obs=datason$observation, na.rm = T))
+  
+  gofs <- gofs[,c(2,3,4,5,6,1)]
+
+}, options = list(pageLength=5, lengthMenu=c(5, 10, 15, 20)))
+
+```
+
+***
+
+####Scatterplot
+
+```{r, echo=FALSE}
+
+renderPlot({
+  
+    name <- input$variable
+    if (grepl("soil_moisture_content",input$variable)) name <- "soil_moisture_content"
+    if (grepl("soil_temperature", input$variable)) name <- "soil_temperature"
+    if (grepl("liquid_soil_water_pressure", input$variable)) name <- "liquid_soil_water_pressure"
+    
+    units <- lookup_tbl_observation$unit[lookup_tbl_observation$obs_var==name]
+    
+    if (input$aggregation=="hour" | input$aggregation=="day")
+    {
+      observation <- obs[[input$aggregation]][,input$variable]
+    } else observation <- obs[["day"]][,input$variable]
+    
+    simulation <- varout[[input$variable]]
+
+    if (input$aggregation=="day" & input$flux_amount=="flux") simulation <- aggregate(simulation, as.Date(time(simulation)), mean, na.rm=T) 
+    if (input$aggregation=="day" & input$flux_amount=="amount") simulation <- aggregate(simulation, as.Date(time(simulation)), sum, na.rm=F)
+    if (input$aggregation=="month" & input$flux_amount=="flux") 
+    {
+      simulation <- aggregate(simulation, as.yearmon(time(simulation)), mean, na.rm=T)
+      observation <- aggregate(observation, as.yearmon(time(observation)), mean, na.rm=T)
+    } 
+    if (input$aggregation=="month" & input$flux_amount=="amount") 
+    {
+      simulation <- aggregate(simulation, as.yearmon(time(simulation)), sum, na.rm=F)
+      observation <- aggregate(observation, as.yearmon(time(observation)), sum, na.rm=F)
+    } 
+    
+  time(observation) <- as.POSIXct(time(observation))
+  time(simulation) <- as.POSIXct(time(simulation))
+
+    data <- merge(observation, simulation)
+    names(data) <- c("observation", "simulation")
+    data <- as.data.frame(coredata(data))
+    
+    ggplot(data = data, aes(x=observation, y=simulation)) +
+      geom_point() +
+      geom_abline(intercept=0, slope=1, col=rgb(1,0,0,.5), lwd=2)
+
+})     
+```

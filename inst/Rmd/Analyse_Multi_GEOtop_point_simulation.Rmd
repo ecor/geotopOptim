@@ -1,0 +1,262 @@
+---
+title: "Analyse GEOtop point simulation"
+author: "Johannes Brenner"
+date: "25. Juni 2015"
+output: html_document
+runtime: shiny
+---
+
+***
+
+This R Markdown document is made interactive using Shiny. To learn more, see [Interactive Documents](http://rmarkdown.rstudio.com/authoring_shiny.html).
+
+***
+
+```{r, include=FALSE}
+
+if(!require("AnalyseGeotop"))
+{
+  if(!require("devtools"))
+  {
+    install.packages(devtools)
+    require("devtools")
+  }
+  install_github("AnalyseGeotop", "JBrenn")
+  require("AnalyseGeotop")
+}
+
+if(!require("dygraphs"))
+{
+  install.packages(dygraphs)
+  require("dygraphs")
+}
+
+   if(!require("data.table"))
+{
+  install.packages(data.table)
+  require("data.table")
+   }
+
+   if(!require("dplyr"))
+{
+  install.packages(dplyr)
+  require("dplyr")
+}
+
+   if(!require("tidyr"))
+{
+  install.packages(tidyr)
+  require("tidyr")
+}
+
+if(!require("hydroGOF"))
+{
+  install.packages(hydroGOF)
+  require("hydroGOF")
+}
+
+# if(!require(hydroGOF))
+# {
+#   install.packages(hydroGOF)
+#   require(hydroGOF)
+# }
+# 
+# if(!require(ggplot2))
+# {
+#   install.packages(ggplot2)
+#   require(ggplot2)
+# }
+
+#wpath <- "/run/user/1000/gvfs/smb-share:server=sdcalp01.eurac.edu,share=data2/Simulations/Simulation_GEOtop_1_225_ZH/Vinschgau/SimTraining/BrJ/HiResAlp/1D/Montecini_pnt_1_225_B2_007/"
+#wpath <- "/run/user/1000/gvfs/smb-share:server=sdcalp01.eurac.edu,share=data2/Simulations/Simulation_GEOtop_1_225_ZH/Vinschgau/SimTraining/BrJ/MonaLisa/1D/Kaltern/sim006"
+
+wpath1 <- "/run/user/1000/gvfs/smb-share:server=sdcalp01.eurac.edu,share=data2/Simulations/Simulation_GEOtop_1_225_ZH/Vinschgau/SimTraining/BrJ/MonaLisa/1D/Kaltern/sim008/"
+wpath2 <- "/run/user/1000/gvfs/smb-share:server=sdcalp01.eurac.edu,share=data2/Simulations/Simulation_GEOtop_1_225_ZH/Vinschgau/SimTraining/BrJ/MonaLisa/1D/Kaltern/sim012/"
+wpath3 <- NULL
+wpath4 <- NULL
+
+# sim data
+
+    if (file.exists(file.path(wpath1,"PointOut.RData"))) {
+      load(file.path(wpath1,"PointOut.RData"))
+      out1 <- out
+      #rm(out)
+  } else {
+    
+    out1 <- GEOtop_ReadPointData(wpath = wpath1, save_rData = T)
+  }
+
+    if (file.exists(file.path(wpath2,"PointOut.RData"))) {
+      load(file.path(wpath2,"PointOut.RData"))
+      out2 <- out
+      #rm(out)
+  } else {
+    out2 <- GEOtop_ReadPointData(wpath = wpath2, save_rData = T)
+  }
+  
+  if (is.null(wpath3)) {
+    out3 <- NULL
+  } else {
+      if (file.exists(file.path(wpath3,"PointOut.RData"))) {
+        load(file.path(wpath3,"PointOut.RData"))
+        out3 <- out
+        #rm(out)
+      } else {
+        out3 <- GEOtop_ReadPointData(wpath = wpath3, save_rData = T)
+      }
+  }
+
+   if (is.null(wpath4)) {
+    out4 <- NULL
+  } else {
+      if (file.exists(file.path(wpath4,"PointOut.RData"))) {
+        load(file.path(wpath4,"PointOut.RData"))
+        out4 <- out
+        #rm(out)
+      } else {
+        out4 <- GEOtop_ReadPointData(wpath = wpath4, save_rData = T)
+      }
+  }
+
+  
+```
+
+#### Interactive Inputs
+
+```{r, echo=FALSE}
+inputPanel(
+  #textInput(inputId = "simFolder", label = "Simulation folder", value = "")
+  
+  selectInput(inputId = "variable", label = "variable choice", choices = c(names(out1)), selected = "Tair.C."),
+  
+#  selectInput(inputId = "var_postprocess", label = "var postprocess", choices = c("n.a.","total precipitation"), selected = "n.a."),
+  
+radioButtons(inputId = "aggregation", label = "aggregation", choices = c("hour","day","month"), selected = "day", inline = FALSE),
+  
+radioButtons(inputId = "flux_amount", label = "flux or amount", choices = c("flux","amount"), selected = "flux", inline = FALSE)
+  
+  # radioButtons(inputId = "cum", label = "cumulated or time series", choices = c("time series","cumulated over time"), selected = "time series", inline = FALSE)
+  
+)
+
+```
+
+***
+
+#### Time Series Plot
+
+
+
+```{r, echo=FALSE}
+
+renderDygraph({
+    
+  if (is.null(wpath3) & is.null(wpath4)) {
+
+    data <- merge(out1[,input$variable], out2[,input$variable])
+
+     if (input$aggregation == "day") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.Date(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.Date(time(data)), sum)
+     } 
+     if (input$aggregation == "month") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.yearmon(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.yearmon(time(data)), sum)
+     } 
+     dimnames(data)[[2]] <- paste(c("sim1","sim2"), input$variable)
+  }
+  
+  if (!is.null(wpath3) & is.null(wpath4)) {
+    data <- merge(out1[,input$variable], out2[,input$variable], out3[,input$variable])
+         if (input$aggregation == "day") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.Date(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.Date(time(data)), sum)
+     } 
+     if (input$aggregation == "month") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.yearmon(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.yearmon(time(data)), sum)
+     } 
+    dimnames(data)[[2]] <- paste(c("sim1","sim2", "sim3"), input$variable)
+  }
+  
+  if (is.null(wpath3) & !is.null(wpath4))
+  {
+    data <- merge(out1[,input$variable], out2[,input$variable], out4[,input$variable])
+         if (input$aggregation == "day") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.Date(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.Date(time(data)), sum)
+     } 
+     if (input$aggregation == "month") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.yearmon(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.yearmon(time(data)), sum)
+     } 
+    dimnames(data)[[2]] <- paste(c("sim1","sim2","sim4"), input$variable)
+  }
+    
+  if (!is.null(wpath3) & !is.null(wpath4))
+  {
+    data <- merge(out1[,input$variable], out2[,input$variable], out3[,input$variable], out4[,input$variable])
+         if (input$aggregation == "day") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.Date(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.Date(time(data)), sum)
+     } 
+     if (input$aggregation == "month") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.yearmon(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.yearmon(time(data)), sum)
+     } 
+    dimnames(data)[[2]] <- paste(c("sim1","sim2","sim3","sim4"), input$variable)
+  }
+  
+  dygraph(data) %>%
+      dyRangeSelector() %>%
+      dyRoller()
+    
+})
+
+```
+  
+***
+
+####Summary Table on Goodness of Fit (GOF)
+
+Measures for GOF are given for seasons and for the whole data series. Calculation were performed with the hydroGOF R-Package. Type ?gof in RStudio for information on specific GOFs.
+
+```{r, echo=FALSE}
+
+renderDataTable({
+  
+ data <- merge(out1[,input$variable], out2[,input$variable])
+ names(data) <- c("out1", "out2")
+
+      if (input$aggregation == "day") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.Date(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.Date(time(data)), sum)
+     } 
+     if (input$aggregation == "month") {
+       if (input$flux_amount == "flux") data <- aggregate(data, as.yearmon(time(data)), mean)
+       if (input$flux_amount == "amount") data <- aggregate(data, as.yearmon(time(data)), sum)
+     } 
+  
+  gofs <- gof(sim = data$out1, obs=data$out2, na.rm = T)
+  gofs <- as.data.frame(gofs)
+  names(gofs) <- "YEAR"
+  gofs$GOF <- dimnames(gofs)[[1]]
+  
+  mon <- as.numeric(format(time(data), "%m"))
+  
+  datadjf <-  data[mon==12 | mon==1 | mon==2,]
+  gofs$DJF <-  c(gof(sim = datadjf$out1, obs=datadjf$out2, na.rm = T))
+  datamam <-  data[mon==3 | mon==4 | mon==5,]
+  gofs$MAM <-  c(gof(sim = datamam$out1, obs=datamam$out2, na.rm = T))
+  datajja <-  data[mon==6 | mon==7 | mon==8,]
+  gofs$JJA <-  c(gof(sim = datajja$out1, obs=datajja$out2, na.rm = T))
+  datason <-  data[mon==9 | mon==10 | mon==11,]
+  gofs$SON <-  c(gof(sim = datason$out1, obs=datason$out2, na.rm = T))
+  
+  gofs <- gofs[,c(2,3,4,5,6,1)]
+
+}, options = list(pageLength=5, lengthMenu=c(5, 10, 15, 20)))
+
+```
+
+***

@@ -19,6 +19,7 @@ NULL
 #' @param SoilType  soil type used for GEOtop Calibration. This must be an ID of the soil types indicated in the \code{inpts.file} of The GEOtop Simulation. Default is 1.  If it is \code{NA} or \code{NULL}, the soil type is extracted from the soil map (\code{SoilMapFile}). 
 #' @param level ID check point of a distributed or quasi-distributed GEOtop simulatiion where to perform the Point Calibration. Default is 1. See \code{\link{get.geotop.inpts.keyword.value}}
 #' @param time.aggregate list of the arguments for \code{\link{aggragate.zoo}}. If it is \code{NULL} (default) no time aggragation is applied to the function outputs. Otherwise, the outputs are aggregated within time intervals. In case of monthly averaged values, it must  be set as \code{list(FUN=mean,by="\%Y-\%m",na.rm=TRUE)} where the \code{by} item is the string format according to POSIX standard for times and dates represented the aggregation interval ( sse \code{\link{strptime}}. 
+#' @param names_par OPTIONAL vector of names for \code{param}
 #' @param ... further arguments for \code{\link{get.geotop.inpts.keyword.value}}
 #' 
 #' 
@@ -26,9 +27,13 @@ NULL
 #' 
 #' @export
 #' 
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split str_replace_all str_sub 
+#' @importFrom utils read.table write.table
+#' 
 #' @importFrom geotopbricks get.geotop.inpts.keyword.value
 #' @importFrom soilwater swc
+#' @importFrom zoo index<- index as.zoo
+#' 
 #' @examples
 #' 
 #' simpath <- system.file("Muntatschini_pnt_1_225_B2_004",package="geotopOptim")
@@ -110,15 +115,10 @@ geotopExec <- function (param=NULL,bin="/home/ecor/local/geotop/GEOtop/bin/geoto
 		runpath="/home/ecor/temp/geotopOptim_tests",temporary.runpath=FALSE,clean=TRUE,recovery=!clean,getKeywords=NULL,
 		data.frame=TRUE,date_field="Date12.DDMMYYYYhhmm.",intern=FALSE,param.soil=TRUE,formatter = "%04d",paramPrefix="Header",names_par=NULL,SoilType=1,level=1,time.aggregate=NULL,...) {
 	
-#	print("param:")
-#	print(param)
-#	print(names_par)
-#	print(simpath)
 
 	
 	
-	
-	
+	message("Preparing a GEOtop Simulation!!")
 	t <- str_split(simpath,"/")[[1]]
 	simdir <- t[length(t)]
 	
@@ -235,7 +235,7 @@ geotopExec <- function (param=NULL,bin="/home/ecor/local/geotop/GEOtop/bin/geoto
 			if (any(str_detect(names(param),ScalarPrefix))) {
 				
 				
-			            print('param with SCALAR')
+			            message('param with SCALAR')
 						print(param)
 						##### CHECK Scalar Keywords 
 						
@@ -730,7 +730,7 @@ geotopExec <- function (param=NULL,bin="/home/ecor/local/geotop/GEOtop/bin/geoto
 		
 		
 	}
-	
+	message("GEOtop is running!!")
 	command.line <- paste(bin,rundir,sep=" ")
 	cc <- system(command.line,intern=intern) 
 	#######print(cc)

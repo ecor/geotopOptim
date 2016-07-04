@@ -43,8 +43,8 @@ NULL
 geotopZProfile <- function(...,variable=c("SoilAveragedTempProfileFile","SoilLiqWaterPressProfileFile","SoilLiqContentProfileFile","SoilIceContentProfileFile","AvailableSoilWaterContent"),
 		zformatter="z%04d",unit=c("centimeters","millimeters"),geotop_unit="millimeters") {
 	
-	
-	print(simpath)
+	###print(zformatter)
+	#####print(simpath)
 	def_args <- as.character(formals(geotopZProfile)$variable) 
 	
 	unit <- unit[1]
@@ -79,11 +79,11 @@ geotopZProfile <- function(...,variable=c("SoilAveragedTempProfileFile","SoilLiq
 	out <- lapply(X=out,FUN=function(x,uf,zfrm){
 				
 				out <- x[,str_detect(names(x),"X")]
-				print("zfrm:")
-				print(zfrm)
-				print(names(x))
+				#print("zfrm:")
+				#print(zfrm)
+				#print(names(x))
 				zval <- as.numeric(str_replace(names(out),"X",""))*uf
-				print(zval)
+				#print(zval)
 				names(out) <- sprintf(zfrm,round(zval))
 				
 				return(out)

@@ -8,7 +8,7 @@ NULL
 #' @param wpath,inpts.file,... arguments that are passed to \code{\link{get.geotop.inpts.keyword.value}}
 #'  
 #' 
-#' 
+#' @importFrom raster cellFromXY
 #' 
 #' @export
 #' 
@@ -53,8 +53,8 @@ extract.geotop.value.fromMap <- function (key,xykeys=c("PointFile","HeaderCoordi
 	if (is.null(xy_p)) xy_p <- data.frame(x=NA,y=NA)
 	xheader <- tryCatch(get.geotop.inpts.keyword.value(xykeys[2],wpath=wpath,inpts.file=inpts.file),error=function(e) {NULL})
 	yheader <- tryCatch(get.geotop.inpts.keyword.value(xykeys[3],wpath=wpath,inpts.file=inpts.file),error=function(e) {NULL})
-	str(xy_p)
-	print(xy_p)
+	##str(xy_p)
+	##print(xy_p)
 	
 	out <- xy_p ###xy_pointfile
 	if (is.null(map)) {
