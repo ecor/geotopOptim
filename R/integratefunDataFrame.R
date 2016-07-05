@@ -18,6 +18,11 @@ NULL
 #' @return The values of the \code{df} quantity interpolated in the \code{zout} soil depths. 
 #' 
 #' @seealso \code{\link{approx}},\code{\link{integrate}}
+#' 
+#' @importFrom stats integrate
+#' 
+#' 
+#' 
 #' @examples 
 #' 
 #' data(MuntatschiniB2)

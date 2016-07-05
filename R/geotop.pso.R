@@ -26,6 +26,9 @@ NULL
 #' 
 #' @rdname geotopPSO
 #' 
+#' @importFrom hydroPSO hydroPSO lhoat
+#' 
+#' 
 #' @examples 
 #' 
 #' #' 

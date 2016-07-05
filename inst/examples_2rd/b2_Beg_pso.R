@@ -10,9 +10,8 @@ library(geotopOptim)
 set.seed(7988)
 
 ####
-R <- '/home/ecor/Dropbox/R-packages/geotopOptim/R'
-lapply(X=list.files(R,pattern=".R",full.names=TRUE),FUN=source)
-
+#R <- '/home/ecor/Dropbox/R-packages/geotopOptim/R'
+#lapply(X=list.files(R,pattern=".R",full.names=TRUE),FUN=source)
 ####
 
 obs <- '/home/ecor/activity/2016/eurac2016/Incarico_EURAC/Simulations/B2/B2_BeG_017_DVM_001/obs/observation.RData' 

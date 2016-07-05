@@ -15,6 +15,9 @@ NULL
 #' 
 #' @return The values of the \code{df} quantity interpolated in the \code{zout} soil depths. 
 #' 
+#' @importFrom stats approx
+#' 
+#' 
 #' @seealso \code{\link{approx}}
 #' @examples 
 #' 
