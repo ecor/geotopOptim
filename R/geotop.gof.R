@@ -125,6 +125,8 @@ geotopGOF <- function(x=NULL,geotop.model=NULL,approx.list=list(),sim=NULL,obs,l
 	 
 	#### print("x:")
 	#### print(x)
+	message("Starting geotopGOF")
+	print(x)
 	
 	if (!is.null(geotop.model)) {
 		
